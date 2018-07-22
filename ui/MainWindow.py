@@ -6,40 +6,20 @@ from collections import OrderedDict
 import yaml
 
 from answers import createAnswer
-from Slot import Slot
+from grid import AnswerGrid
 
 class MainWindow(Gtk.Window):
 
-    def __init__(self, cols = 5, rows = 5):
+    def __init__(self):
         Gtk.Window.__init__(self, title="Jeopardy")
-        self._cols = cols
-        self._rows = rows
 
         self.mainContainer = Gtk.Box()
+        self.grid = AnswerGrid()
+
+        self.mainContainer.pack_start(self.grid, True, True, 0)
         self.add(self.mainContainer)
 
-        self.grid = Gtk.Grid()
-        self.grid.set_column_homogeneous(True)
-        self.grid.set_row_homogeneous(True)
-        self.mainContainer.pack_start(self.grid, True, True, 0)
-
-        self._initGrid()
-
-        self.connect("key-release-event", self.onKeyRelease)   
-
-    def _initGrid(self):
-        self.headline = tuple([Gtk.Button(label="Headline " + str(i)) for i in range(1, self._rows + 1)])
-
-        getRow = lambda row: tuple([Slot(100 * (row + 1), None) for i in range(0, self._cols)])
-        self.slots = tuple([getRow(row) for row in range(0, self._rows)])
-
-        for child in self.grid.get_children():
-            self.grid.remove(child)
-
-        for col in range(0, self._cols):
-            self.grid.attach(self.headline[col], col, 0, 1, 1)
-            for row in range(0, self._rows):
-                self.grid.attach(self.slots[row][col], col, row + 1, 1, 1)
+        self.connect("key-release-event", self.onKeyRelease)
 
     def showGrid(self):
         for child in self.mainContainer.get_children():
@@ -63,23 +43,23 @@ class MainWindowInitializer():
 
     def __init__(self, mainWindow):
         self._mainWindow = mainWindow
+        self._grid = mainWindow.grid
 
     def initFromFile(self, filename):
         with open(filename) as stream:
             data = yaml.safe_load(stream)
-            gridSize = self.getGridSize(data)
+            rows, cols = self.getGridSize(data)
 
-            if not (self._mainWindow._rows, self._mainWindow._cols) == gridSize:
-                self._mainWindow._rows, self._mainWindow._cols = gridSize
-                self._mainWindow._initGrid()
+            if not self._grid.rows == rows or not self._grid.cols == cols:
+                self._grid.initComponents(rows, cols)
 
             categories = list(data.keys())
-            for col in range(0, self._mainWindow._cols):
-                self._mainWindow.headline[col].set_label(categories[col])
+            for col in range(0, cols):
+                self._grid.headline[col].set_label(categories[col])
 
-                for row in range(0,  self._mainWindow._rows):
+                for row in range(0, rows):
                     answer = createAnswer(categories[col], data[categories[col]][row])
-                    self._mainWindow.slots[row][col].answer = answer
+                    self._grid.slots[row][col].answer = answer
 
     def getGridSize(self, data):
         if not type(data) == OrderedDict:
