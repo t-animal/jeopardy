@@ -2,6 +2,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+from answers import TextAnswer
+
 class Slot(Gtk.Box):
     def __init__(self, amount, answer, doubleJeopardy=False):
         Gtk.Box.__init__(self)
@@ -28,10 +30,10 @@ class Slot(Gtk.Box):
         self.queue_draw()
 
     def showAnswer(self, _target):
-        #TODO: Show answer window
-        self.repack()
+        self.get_toplevel().showAnswer(self.answer)
 
     def _createButton(self):
         self._button = Gtk.Button(label = self.amount)
         self._button.connect("clicked", self.showAnswer)
         return self._button
+
