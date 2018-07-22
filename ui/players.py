@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gdk
+from gi.repository import Gtk, Gdk, GObject
 
 import unicodedata
 
@@ -21,6 +21,9 @@ class PlayerManager():
 
     def getPlayer(self, key):
         return self.playersByKey[key]
+
+    def getPlayerByKeycode(self, key):
+        return self.getPlayer(chr(Gdk.keyval_to_unicode(event.keyval)))
     
     def isPlayerKey(self, key):
         return key in self.playersByKey
@@ -38,6 +41,7 @@ class PlayerManager():
 
 class PlayerOverviewWindow(Gtk.Window):
 
+
     def __init__(self, playerManager):
         Gtk.Window.__init__(self, title = "Player Overview")
         self.playerListStore =  Gtk.ListStore(str, str)
@@ -49,18 +53,20 @@ class PlayerOverviewWindow(Gtk.Window):
         self.playerList.append_column(Gtk.TreeViewColumn("Key", playerListRenderer, text=1))
         self.playerList.set_enable_search(False)
         self.playerList.set_headers_visible(True)
+
+        beginButton = Gtk.Button("Begin!")
+        beginButton.connect("clicked", lambda x: self.emit("playerSetupDone"))
         
         box = Gtk.Box()
         box.set_orientation(Gtk.Orientation.VERTICAL)
         box.pack_start(Gtk.Label("Player management"), False, False, 0)
         box.pack_start(self.playerList, True, True, 0)
         box.pack_start(Gtk.Label("Press any key to add a new player"), False, False, 0)
-        box.pack_end(Gtk.Button("Begin!"), False, False, 0)
+        box.pack_end(beginButton, False, False, 0)
 
         self.connect("key-release-event", self._onKeyRelease)
         self.add(box)
         self.resize(500, 400)
-        self.show_all()
 
         self.updateList()
 
@@ -136,6 +142,9 @@ class PlayerNameDialog(Gtk.Dialog):
 
         if event.keyval == Gdk.KEY_Return:
             self.response(Gtk.ResponseType.OK)
+
+
+GObject.signal_new('playerSetupDone', PlayerOverviewWindow, GObject.SIGNAL_RUN_LAST, GObject.TYPE_PYOBJECT, [])
 
 if __name__ == "__main__":
     p = PlayerOverviewWindow(PlayerManager())

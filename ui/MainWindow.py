@@ -5,7 +5,7 @@ from gi.repository import Gtk, Gdk
 from collections import OrderedDict
 import yaml
 
-from answers import createAnswer
+from answers import AnswerFactory
 from grid import AnswerGrid
 
 class MainWindow(Gtk.Window):
@@ -41,7 +41,8 @@ class MainWindow(Gtk.Window):
 
 class MainWindowInitializer():
 
-    def __init__(self, mainWindow):
+    def __init__(self, playerManager, mainWindow):
+        self.answerFactory = AnswerFactory(playerManager)
         self._mainWindow = mainWindow
         self._grid = mainWindow.grid
 
@@ -58,7 +59,7 @@ class MainWindowInitializer():
                 self._grid.headline[col].set_label(categories[col])
 
                 for row in range(0, rows):
-                    answer = createAnswer(categories[col], data[categories[col]][row])
+                    answer = self.answerFactory.createAnswer(categories[col], data[categories[col]][row])
                     self._grid.slots[row][col].answer = answer
 
     def getGridSize(self, data):

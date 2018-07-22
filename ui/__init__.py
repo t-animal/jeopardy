@@ -3,6 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
 from MainWindow import MainWindow, MainWindowInitializer
+from players import PlayerManager, PlayerOverviewWindow
 
 class FullscreenManager:
 
@@ -38,14 +39,23 @@ class FullscreenManager:
 
 if __name__ == "__main__":
     fullscreenManager =  FullscreenManager()
+    playerManager = PlayerManager()
 
-    win = MainWindow()
-    initer = MainWindowInitializer(win)
+    mainWindow = MainWindow()
+    playerWindow = PlayerOverviewWindow(playerManager)
+
+    initer = MainWindowInitializer(playerManager, mainWindow)
     initer.initFromFile("test.yaml")
 
-    win.connect("destroy", Gtk.main_quit)
-    win.show_all()
+    fullscreenManager.handleWindow(mainWindow)
+    fullscreenManager.handleWindow(playerWindow)
 
-    fullscreenManager.handleWindow(win)
+    mainWindow.show_all()
+    playerWindow.show_all()
 
+    mainWindow.iconify()
+    playerWindow.present()
+
+    mainWindow.connect("destroy", Gtk.main_quit)
+    playerWindow.connect("playerSetupDone", lambda x: mainWindow.present())
     Gtk.main()
