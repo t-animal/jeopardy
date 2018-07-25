@@ -6,7 +6,10 @@ from collections import OrderedDict
 import yaml
 
 from .answers import AnswerFactory
+from .players import PlayerWidget
 from .grid import AnswerGrid
+from .model.player import SIG_PLAYER_MODEL_CHANGED
+from .util import clearChildren
 
 class MainWindow(Gtk.Window):
 
@@ -14,22 +17,28 @@ class MainWindow(Gtk.Window):
         Gtk.Window.__init__(self, title="Jeopardy")
 
         self.mainContainer = Gtk.Box()
-        self.grid = AnswerGrid()
 
-        self.mainContainer.pack_start(self.grid, True, True, 0)
+        self.gridContainer = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+        self.grid = AnswerGrid()
+        self.playerNamesBox = Gtk.Box()
+
+        self.gridContainer.pack_start(self.grid, True, True, 0)
+        self.gridContainer.pack_end(self.playerNamesBox, False, False, 0)
+
+        self.mainContainer.add(self.gridContainer)
         self.add(self.mainContainer)
 
         self.connect("key-release-event", self.onKeyRelease)
 
     def showGrid(self):
         for child in self.mainContainer.get_children():
-            if not child == self.grid:
+            if not child == self.gridContainer:
                 self.mainContainer.remove(child)
 
-        self.grid.show()
+        self.gridContainer.show()
 
     def showAnswer(self, answer):
-        self.grid.hide()
+        self.gridContainer.hide()
 
         self.mainContainer.pack_start(answer, True, True, 0)
         answer.show()
@@ -39,12 +48,15 @@ class MainWindow(Gtk.Window):
             self.showGrid()
 
 
+
 class MainWindowInitializer():
 
     def __init__(self, playerManager, mainWindow):
         self.answerFactory = AnswerFactory(playerManager)
+        self.playerManager = playerManager
         self._mainWindow = mainWindow
         self._grid = mainWindow.grid
+        playerManager.connect(SIG_PLAYER_MODEL_CHANGED, self.initPlayers)
 
     def initFromFile(self, filename):
         with open(filename) as stream:
@@ -61,6 +73,13 @@ class MainWindowInitializer():
                 for row in range(0, rows):
                     answer = self.answerFactory.createAnswer(categories[col], data[categories[col]][row])
                     self._grid.slots[row][col].answer = answer
+
+    def initPlayers(self, data):
+        clearChildren(self._mainWindow.playerNamesBox)
+
+        for player in self.playerManager.getPlayers():
+            self._mainWindow.playerNamesBox.add(PlayerWidget(player.name))
+
 
     def getGridSize(self, data):
         if not type(data) == OrderedDict:

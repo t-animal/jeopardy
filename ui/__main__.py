@@ -58,6 +58,5 @@ if __name__ == "__main__":
     playerWindow.present()
 
     mainWindow.connect("destroy", Gtk.main_quit)
-    playerManager.connect(SIG_PLAYER_MODEL_CHANGED, lambda x: print("meh"))
     playerWindow.connect(SIG_PLAYER_SETUP_DONE, lambda x: mainWindow.present())
     Gtk.main()

@@ -7,3 +7,7 @@ def keyToUnicode(key):
 
 def createSignal(signalName, emittingClass):
 	GObject.signal_new(signalName, emittingClass, GObject.SIGNAL_RUN_LAST, GObject.TYPE_PYOBJECT, [])
+
+def clearChildren(widget):
+    for child in widget.get_children():
+        widget.remove(child)
