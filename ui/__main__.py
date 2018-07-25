@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
 from .MainWindow import MainWindow, MainWindowInitializer
-from .players import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
+from .player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
 from .model.player import PlayerManager, SIG_PLAYER_MODEL_CHANGED
 
 class FullscreenManager:

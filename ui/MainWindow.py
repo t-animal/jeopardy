@@ -6,7 +6,7 @@ from collections import OrderedDict
 import yaml
 
 from .answers import AnswerFactory
-from .players import PlayerWidget
+from .player import PlayerWidget
 from .grid import AnswerGrid
 from .model.player import SIG_PLAYER_MODEL_CHANGED
 from .util import clearChildren
@@ -25,7 +25,7 @@ class MainWindow(Gtk.Window):
         self.gridContainer.pack_start(self.grid, True, True, 0)
         self.gridContainer.pack_end(self.playerNamesBox, False, False, 0)
 
-        self.mainContainer.add(self.gridContainer)
+        self.mainContainer.pack_start(self.gridContainer, True, True, 0)
         self.add(self.mainContainer)
 
         self.connect("key-release-event", self.onKeyRelease)
