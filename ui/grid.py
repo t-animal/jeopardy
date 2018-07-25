@@ -2,7 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
-from answers import TextAnswer
+from .answers import TextAnswer
 
 class AnswerGrid(Gtk.Grid):
     def __init__(self):

@@ -2,8 +2,9 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
-from MainWindow import MainWindow, MainWindowInitializer
-from players import PlayerManager, PlayerOverviewWindow
+from .MainWindow import MainWindow, MainWindowInitializer
+from .players import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
+from .model.player import PlayerManager, SIG_PLAYER_MODEL_CHANGED
 
 class FullscreenManager:
 
@@ -57,5 +58,6 @@ if __name__ == "__main__":
     playerWindow.present()
 
     mainWindow.connect("destroy", Gtk.main_quit)
-    playerWindow.connect("playerSetupDone", lambda x: mainWindow.present())
+    playerManager.connect(SIG_PLAYER_MODEL_CHANGED, lambda x: print("meh"))
+    playerWindow.connect(SIG_PLAYER_SETUP_DONE, lambda x: mainWindow.present())
     Gtk.main()

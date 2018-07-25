@@ -5,8 +5,8 @@ from gi.repository import Gtk, Gdk
 from collections import OrderedDict
 import yaml
 
-from answers import AnswerFactory
-from grid import AnswerGrid
+from .answers import AnswerFactory
+from .grid import AnswerGrid
 
 class MainWindow(Gtk.Window):
 

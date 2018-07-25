@@ -4,43 +4,11 @@ from gi.repository import Gtk, Gdk, GObject
 
 import unicodedata
 
-class Player():
+from .util import createSignal
 
-    def __init__(self, name, key):
-        self.name = name
-        self.key = key
-
-
-class PlayerManager():
-
-    def __init__(self):
-        self.playersByKey = {}
-
-    def getPlayers(self):
-        return self.playersByKey.values()
-
-    def getPlayer(self, key):
-        return self.playersByKey[key]
-
-    def getPlayerByKeycode(self, key):
-        return self.getPlayer(chr(Gdk.keyval_to_unicode(event.keyval)))
-    
-    def isPlayerKey(self, key):
-        return key in self.playersByKey
-    
-    def isPlayerKeycode(self, key):
-        pressedKey = chr(Gdk.keyval_to_unicode(event.keyval))
-        return pressedKey in self.playersByKey
-
-    def addPlayer(self, name, key):
-        self.playersByKey[key] = Player(name, key)
-
-    def removePlayerByKey(self, key):
-        del self.playersByKey[key]
-
+SIG_PLAYER_SETUP_DONE = "playerSetupDone"
 
 class PlayerOverviewWindow(Gtk.Window):
-
 
     def __init__(self, playerManager):
         Gtk.Window.__init__(self, title = "Player Overview")
@@ -55,7 +23,7 @@ class PlayerOverviewWindow(Gtk.Window):
         self.playerList.set_headers_visible(True)
 
         beginButton = Gtk.Button("Begin!")
-        beginButton.connect("clicked", lambda x: self.emit("playerSetupDone"))
+        beginButton.connect("clicked", lambda x: self.emit(SIG_PLAYER_SETUP_DONE))
         
         box = Gtk.Box()
         box.set_orientation(Gtk.Orientation.VERTICAL)
@@ -144,7 +112,8 @@ class PlayerNameDialog(Gtk.Dialog):
             self.response(Gtk.ResponseType.OK)
 
 
-GObject.signal_new('playerSetupDone', PlayerOverviewWindow, GObject.SIGNAL_RUN_LAST, GObject.TYPE_PYOBJECT, [])
+
+createSignal(SIG_PLAYER_SETUP_DONE, PlayerOverviewWindow)
 
 if __name__ == "__main__":
     p = PlayerOverviewWindow(PlayerManager())
