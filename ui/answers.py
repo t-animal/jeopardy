@@ -10,10 +10,24 @@ class AnswerFactory:
     def createAnswer(self, category, text):
         return TextAnswer(self.playerManager, category, text)
 
-class TextAnswer(Gtk.Box):
-    def __init__(self, playerManager, category, text):
+class Answer(Gtk.Box):
+
+    def __init__(self, playerManager):
         Gtk.Box.__init__(self)
         self.playerManager = playerManager
+        self.hasQuestionRequest = False
+
+        self.connect("key-release-event", self._onKeyRelease)
+
+    def _onKeyRelease(self, widget, event, data = None):
+        #TODO: ist das nebenlaeufig?
+        if self.hasQuestionRequest:
+            return
+
+
+class TextAnswer(Answer):
+    def __init__(self, playerManager, category, text):
+        super().__init__(playerManager)
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
 
@@ -22,8 +36,3 @@ class TextAnswer(Gtk.Box):
 
         self.show_all()
 
-        self.connect("key-release-event", self._onKeyRelease)
-
-    def _onKeyRelease(self, widget, event, data = None):
-        if playerManager.isPlayerKeyval(event.keyval):
-            print("Player " + playerManager.getPlayerByKeyval(event.keyval) + " is on!")

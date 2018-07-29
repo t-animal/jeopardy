@@ -5,6 +5,7 @@ from gi.repository import Gtk, Gdk, GObject
 import unicodedata
 
 from . import PlayerOverviewWindow, PlayerNameDialog, SIG_PLAYER_SETUP_DONE
+from ..util import keyvalToKey
 
 class PlayerOverviewWindow(Gtk.Window):
 
@@ -68,7 +69,7 @@ class PlayerOverviewWindow(Gtk.Window):
             self.removeSelectedPlayer()
             return
 
-        pressedKey = chr(Gdk.keyval_to_unicode(event.keyval))
+        pressedKey = keyvalToKey(event.keyval)
         keyCategory = unicodedata.category(pressedKey)
 
         if keyCategory[0] in ["L", "M", "N", "P", "S"]:

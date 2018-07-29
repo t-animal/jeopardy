@@ -13,8 +13,11 @@ from .util import clearChildren
 
 class MainWindow(Gtk.Window):
 
-    def __init__(self):
+    def __init__(self, playerManager):
         Gtk.Window.__init__(self, title="Jeopardy")
+        self.buzzIndicator = None
+
+        self.playerManager = playerManager
 
         self.mainContainer = Gtk.Box()
 
@@ -43,10 +46,44 @@ class MainWindow(Gtk.Window):
         self.mainContainer.pack_start(answer, True, True, 0)
         answer.show()
 
-    def onKeyRelease(self, widget, ev, data = None):
-        if ev.keyval == Gdk.KEY_Escape:
+    def onKeyRelease(self, widget, event, data = None):
+        if event.keyval == Gdk.KEY_Escape:
             self.showGrid()
+            return
 
+        if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
+            self.buzzIndicator = QuestionRequestWindow(self.playerManager.getPlayerByKeyval(event.keyval))
+            self.buzzIndicator.placeAtBottomRightOf(self)
+            self.buzzIndicator = None
+            
+
+class QuestionRequestWindow(Gtk.Window):
+
+    def __init__(self, player):
+        Gtk.Window.__init__(self)
+
+        self.buttonContainer = Gtk.Box()
+        self.buttonContainer.pack_end(Gtk.Button(label = "Oops"), False, False, 0)
+        self.buttonContainer.pack_end(Gtk.Button(label = "Correct"), False, False, 0)
+        self.buttonContainer.pack_end(Gtk.Button(label = "Wrong!"), False, False, 0)
+
+        self.mainContainer = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
+        self.mainContainer.pack_start(Gtk.Label(player.name + " has buzzered"), True, True, 0)
+        self.mainContainer.pack_end(self.buttonContainer, True, True, 0)
+
+        self.add(self.mainContainer)
+
+        self.show_all()
+
+        self.set_decorated(False)
+        self.set_keep_above(True)
+
+    def placeAtBottomRightOf(self, otherWindow):
+        otherX, otherY = otherWindow.get_position()
+        otherWidth, otherHeight = otherWindow.get_size()
+        selfWidth, selfHeight = self.get_size()
+
+        self.move(otherX + otherWidth - selfWidth, otherY + otherHeight - selfHeight)
 
 
 class MainWindowInitializer():
@@ -99,7 +136,6 @@ class MainWindowInitializer():
                     " does not match previous categories")
 
         return (answerCount, len(data))
-
 
 from yaml import SafeLoader, SafeDumper
 from yaml.representer import SafeRepresenter

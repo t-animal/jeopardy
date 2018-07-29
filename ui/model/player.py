@@ -16,7 +16,7 @@ class PlayerManager(GObject.Object):
 
     def __init__(self):
         GObject.Object.__init__(self)
-        self.playersByKey = {}
+        self.playersByKey = {'a': Player('test', 'a')}
 
     def getPlayers(self):
         return self.playersByKey.values()

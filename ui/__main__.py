@@ -42,7 +42,7 @@ if __name__ == "__main__":
     fullscreenManager =  FullscreenManager()
     playerManager = PlayerManager()
 
-    mainWindow = MainWindow()
+    mainWindow = MainWindow(playerManager)
     playerWindow = PlayerOverviewWindow(playerManager)
 
     initer = MainWindowInitializer(playerManager, mainWindow)
