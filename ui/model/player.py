@@ -2,7 +2,7 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
-from ..util import keyToUnicode, createSignal
+from ..util import keyvalToKey, createSignal
 
 SIG_PLAYER_MODEL_CHANGED = 'playerModelChanged'
 
@@ -24,14 +24,14 @@ class PlayerManager(GObject.Object):
     def getPlayer(self, key):
         return self.playersByKey[key]
 
-    def getPlayerByKeycode(self, key):
-        return self.getPlayer(keyToUnicode(key))
+    def getPlayerByKeyval(self, keyval):
+        return self.getPlayer(keyvalToKey(keyval))
     
     def isPlayerKey(self, key):
         return key in self.playersByKey
     
-    def isPlayerKeycode(self, key):
-        return keyToUnicode(key) in self.playersByKey
+    def isPlayerKeyval(self, keyval):
+        return keyvalToKey(keyval) in self.playersByKey
 
     def addPlayer(self, name, key):
         self.playersByKey[key] = Player(name, key)

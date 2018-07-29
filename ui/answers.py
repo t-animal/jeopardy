@@ -25,5 +25,5 @@ class TextAnswer(Gtk.Box):
         self.connect("key-release-event", self._onKeyRelease)
 
     def _onKeyRelease(self, widget, event, data = None):
-        if playerManager.isPlayerKeycode(event.keyval):
-            print("Player " + playerManager.getPlayerByKeycode(event.keyval) + " is on!")
+        if playerManager.isPlayerKeyval(event.keyval):
+            print("Player " + playerManager.getPlayerByKeyval(event.keyval) + " is on!")
