@@ -47,6 +47,10 @@ class Slot(Gtk.Box):
 
         self.repack()
 
+    def addResult(self, result):
+        self.results.apend(result)
+        self.repack()
+
     def repack(self):
         if self._button.get_ancestor(Gtk.Box) == self:
             self.remove(self._button)
@@ -54,10 +58,11 @@ class Slot(Gtk.Box):
         if len(self.results) == 0:
             self.pack_start(self._button, True, True, 0)
         else:
-            self._label.set_text("\n".join(self.results))
+            self._label.set_text("\n".join([result.getLabel() for result in self.results]))
             self.pack_start(self._label, True, True, 0)
             self._label.show()
 
+        self.show_all()
         self.queue_draw()
 
     def showAnswer(self, _target):

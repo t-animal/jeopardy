@@ -6,6 +6,7 @@ import yaml
 from collections import OrderedDict
 
 from . import SIG_GAME_MODEL_CHANGED
+from .player import Player
 
 class Result():
 
@@ -13,6 +14,9 @@ class Result():
         self.player = player
         self.correct = correct
         self.points = points
+
+    def getLabel(self):
+        return "{}{} for {}".format("+" if self.correct else "-", self.points, self.player.name)
 
 class GameStateModel(GObject.Object):
 

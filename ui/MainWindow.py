@@ -108,7 +108,6 @@ class MainWindowInitializer():
         for player in self.playerManager.getPlayers():
             self._mainWindow.playerNamesBox.add(PlayerWidget(player.name))
 
-
     def initGrid(self, *event_args):
         cols = len(self.gameStateModel.getCategoryNames())
 
@@ -121,6 +120,8 @@ class MainWindowInitializer():
             self._grid.headline[col].set_label(category)
             for row, answer in enumerate(self.gameStateModel.getAnswers(category)):
                 self._grid.slots[row][col].answer = self.answerFactory.createAnswer(category, answer)
+                self._grid.slots[row][col].results = self.gameStateModel.getResults(category, row)
+                self._grid.slots[row][col].repack()
 
 
 from yaml import SafeLoader, SafeDumper
