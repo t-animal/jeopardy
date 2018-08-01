@@ -8,7 +8,7 @@ import yaml
 from .answers import AnswerFactory
 from .player import PlayerWidget
 from .grid import AnswerGrid
-from .model import SIG_PLAYER_MODEL_CHANGED
+from .model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
 from .util import clearChildren
 
 class MainWindow(Gtk.Window):
@@ -88,54 +88,40 @@ class QuestionRequestWindow(Gtk.Window):
 
 class MainWindowInitializer():
 
-    def __init__(self, playerManager, mainWindow):
+    def __init__(self, playerManager, gameStateModel, mainWindow):
         self.answerFactory = AnswerFactory(playerManager)
         self.playerManager = playerManager
+        self.gameStateModel = gameStateModel
         self._mainWindow = mainWindow
         self._grid = mainWindow.grid
+
         playerManager.connect(SIG_PLAYER_MODEL_CHANGED, self.initPlayers)
+        gameStateModel.connect(SIG_GAME_MODEL_CHANGED, self.initGrid)
 
-    def initFromFile(self, filename):
-        with open(filename) as stream:
-            data = yaml.safe_load(stream)
-            rows, cols = self.getGridSize(data)
+    def initMainWindow(self):
+        self.initPlayers()
+        self.initGrid()
 
-            if not self._grid.rows == rows or not self._grid.cols == cols:
-                self._grid.initComponents(rows, cols)
-
-            categories = list(data.keys())
-            for col in range(0, cols):
-                self._grid.headline[col].set_label(categories[col])
-
-                for row in range(0, rows):
-                    answer = self.answerFactory.createAnswer(categories[col], data[categories[col]][row])
-                    self._grid.slots[row][col].answer = answer
-
-    def initPlayers(self, data):
+    def initPlayers(self, *event_args):
         clearChildren(self._mainWindow.playerNamesBox)
 
         for player in self.playerManager.getPlayers():
             self._mainWindow.playerNamesBox.add(PlayerWidget(player.name))
 
 
-    def getGridSize(self, data):
-        if not type(data) == OrderedDict:
-            raise ValueError("Game tables must be represented as dicts")
+    def initGrid(self, *event_args):
+        cols = len(self.gameStateModel.getCategoryNames())
 
-        answerCount = -1
-        for category, answers in data.items():
-            if not type(answers) == list:
-                raise ValueError("Answers must be represented as lists")
+        for col, category in enumerate(self.gameStateModel.getCategoryNames()):
+            answers = self.gameStateModel.getAnswers(category)
 
-            if answerCount == -1:
-                answerCount = len(answers)
-                continue
+            if not self._grid.rows == len(answers) or not self._grid.cols == cols:
+                self._grid.initComponents(len(answers), cols)
 
-            if not len(answers) == answerCount:
-                raise ValueError("Answer count for category " + category + \
-                    " does not match previous categories")
+            self._grid.headline[col].set_label(category)
+            for row, answer in enumerate(self.gameStateModel.getAnswers(category)):
+                self._grid.slots[row][col].answer = self.answerFactory.createAnswer(category, answer)
 
-        return (answerCount, len(data))
 
 from yaml import SafeLoader, SafeDumper
 from yaml.representer import SafeRepresenter
