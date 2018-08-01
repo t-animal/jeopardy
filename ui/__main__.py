@@ -4,7 +4,8 @@ from gi.repository import Gtk, Gdk
 
 from .MainWindow import MainWindow, MainWindowInitializer
 from .player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
-from .model.player import PlayerManager, SIG_PLAYER_MODEL_CHANGED
+from .model import PlayerManager, SIG_PLAYER_MODEL_CHANGED
+from .model.persistor import ModelPersistor, ModelLoader
 
 class FullscreenManager:
 
@@ -41,6 +42,10 @@ class FullscreenManager:
 if __name__ == "__main__":
     fullscreenManager =  FullscreenManager()
     playerManager = PlayerManager()
+
+    ModelLoader(playerManager).loadModel()
+
+    ModelPersistor(playerManager)
 
     mainWindow = MainWindow(playerManager)
     playerWindow = PlayerOverviewWindow(playerManager)

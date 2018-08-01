@@ -2,9 +2,10 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import GObject
 
-from ..util import keyvalToKey, createSignal
+from collections import OrderedDict
 
-SIG_PLAYER_MODEL_CHANGED = 'playerModelChanged'
+from . import SIG_PLAYER_MODEL_CHANGED
+from ..util import keyvalToKey
 
 class Player():
 
@@ -16,7 +17,7 @@ class PlayerManager(GObject.Object):
 
     def __init__(self):
         GObject.Object.__init__(self)
-        self.playersByKey = {'a': Player('test', 'a')}
+        self.playersByKey = OrderedDict()
 
     def getPlayers(self):
         return self.playersByKey.values()
@@ -41,5 +42,3 @@ class PlayerManager(GObject.Object):
         del self.playersByKey[key]
         self.emit(SIG_PLAYER_MODEL_CHANGED)
 
-
-createSignal(SIG_PLAYER_MODEL_CHANGED, PlayerManager)
