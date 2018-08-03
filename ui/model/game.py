@@ -38,6 +38,15 @@ class GameStateModel(GObject.Object):
         
         self.emit(SIG_GAME_MODEL_CHANGED)
 
+    def getGridSize(self):
+        categoryCount = len(self.answersByCategory) 
+
+        if categoryCount == 0:
+            return (0,0)
+
+        rowCount = len(next(iter(self.answersByCategory.values())))
+        return (rowCount, categoryCount)
+
     def getCategoryNames(self):
         return self.answersByCategory.keys()
 

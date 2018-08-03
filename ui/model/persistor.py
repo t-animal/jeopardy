@@ -1,20 +1,40 @@
 import yaml
 
-from . import SIG_PLAYER_MODEL_CHANGED
+from . import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
 
 class ModelPersistor():
 
-	def __init__(self, playerManager, filename="log.yml"):
+	def __init__(self, playerManager, gameStateModel, filename="log.yml"):
 		self.file = open(filename, "a")
 		self.playerManager = playerManager
+		self.gameStateModel = gameStateModel
 
 		playerManager.connect(SIG_PLAYER_MODEL_CHANGED, self.persistModel)
+		gameStateModel.connect(SIG_GAME_MODEL_CHANGED, self.persistModel)
 
 	def persistModel(self, *args):
 		state = {}
-		state["players"] = [{"key": p.key, "name": p.name} for p in self.playerManager.getPlayers()]
+		self.addPlayersSerializable(state)
+		self.addResultsSerializable(state)
+
 		self.file.write(yaml.safe_dump(state, explicit_start = True))
 		self.file.flush()
+
+	def addPlayersSerializable(self, state):
+		state["players"] = [{"key": p.key, "name": p.name} for p in self.playerManager.getPlayers()]
+
+	def addResultsSerializable(self, state):
+		state["results"] = {}
+		_, rows = self.gameStateModel.getGridSize()
+		for col, category in enumerate(self.gameStateModel.getCategoryNames()):
+			for row in range(0, rows):
+				if not self.gameStateModel.hasResults(category, row):
+					continue
+
+				results = self.gameStateModel.getResults(category, row)
+				serializable = [{"player": r.player.key, "correct": r.correct, "wager": r.points} for r in results]
+				state["results"]["{}/{}".format(row, col)] = serializable
+
 
 class ModelLoader():
 
