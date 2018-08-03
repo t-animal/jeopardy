@@ -62,11 +62,11 @@ class MainWindow(Gtk.Window):
 
             if indicated == QuestionRequestWindow.INCORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
-                self.gameStateModel.addResult(category, row, activePlayer, False, row * 100)
+                self.gameStateModel.addResult(category, row, activePlayer, False, (row + 1) * 100)
 
             if indicated == QuestionRequestWindow.CORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
-                self.gameStateModel.addResult(category, row, activePlayer, True, row * 100)
+                self.gameStateModel.addResult(category, row, activePlayer, True, (row + 1) * 100)
                 self.showGrid()
 
                 if not self.buzzerSignalId is None:
