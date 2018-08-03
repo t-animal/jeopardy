@@ -30,9 +30,17 @@ class ModelLoader():
 			for state in stateDocuments:
 				pass
 
+		if "players" in state:
+			self.loadPlayers(state)
+
+		if "results" in state:
+			self.loadResults(state)
+
+	def loadPlayers(self, state):
 		for player in state["players"]:
 			self.playerManager.addPlayer(player["name"], player["key"])
 
+	def loadResults(self, state):
 		categories = list(self.gameStateModel.getCategoryNames())
 		for index, results in state["results"].items():
 			row, col = map(int, index.split("/"))
