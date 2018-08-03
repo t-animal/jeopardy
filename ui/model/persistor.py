@@ -18,9 +18,10 @@ class ModelPersistor():
 
 class ModelLoader():
 
-	def __init__(self, playerManager, filename="log.yml"):
+	def __init__(self, playerManager, gameStateModel, filename="log.yml"):
 		self.filename = filename
 		self.playerManager = playerManager
+		self.gameStateModel = gameStateModel
 
 	def loadModel(self):
 		with open(self.filename, "r") as file:
@@ -31,3 +32,10 @@ class ModelLoader():
 
 		for player in state["players"]:
 			self.playerManager.addPlayer(player["name"], player["key"])
+
+		categories = list(self.gameStateModel.getCategoryNames())
+		for index, results in state["results"].items():
+			row, col = map(int, index.split("/"))
+			for result in results:
+				self.gameStateModel.addResult(categories[col], row, 
+					self.playerManager.getPlayerByKey(result["player"]), result["correct"], result["wager"])

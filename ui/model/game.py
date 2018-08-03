@@ -23,7 +23,7 @@ class GameStateModel(GObject.Object):
     def __init__(self):
         GObject.Object.__init__(self)
 
-        self.answersByCategory = {}
+        self.answersByCategory = OrderedDict()
         self.results = {}
 
     def addCategory(self, categoryName, answers):

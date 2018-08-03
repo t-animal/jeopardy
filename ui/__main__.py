@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
     GameStateLoader(gameStateModel).initFromFile("test.yaml")
 
-    ModelLoader(playerManager).loadModel()
+    ModelLoader(playerManager, gameStateModel).loadModel()
     ModelPersistor(playerManager)
 
     mainWindow = MainWindow(playerManager)

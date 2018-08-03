@@ -27,6 +27,9 @@ class PlayerManager(GObject.Object):
 
     def getPlayerByKeyval(self, keyval):
         return self.getPlayer(keyvalToKey(keyval))
+
+    def getPlayerByKey(self, key):
+        return self.getPlayer(key)
     
     def isPlayerKey(self, key):
         return key in self.playersByKey
