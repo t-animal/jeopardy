@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ModelLoader(playerManager, gameStateModel).loadModel()
     ModelPersistor(playerManager)
 
-    mainWindow = MainWindow(playerManager)
+    mainWindow = MainWindow(playerManager, gameStateModel)
     playerWindow = PlayerOverviewWindow(playerManager)
 
     initer = MainWindowInitializer(playerManager, gameStateModel, mainWindow)

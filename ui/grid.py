@@ -16,7 +16,7 @@ class AnswerGrid(Gtk.Grid):
     def initComponents(self, rows = 5, cols = 5):
         self.headline = tuple([Gtk.Button(label="Headline " + str(i)) for i in range(1, rows + 1)])
 
-        createRow = lambda row: tuple([Slot(100 * (row + 1), None) for i in range(0, cols)])
+        createRow = lambda row: tuple([Slot(col, row, None) for col in range(0, cols)]) #TODO: col row einheitlich
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
         for child in self.get_children():
@@ -36,9 +36,10 @@ class AnswerGrid(Gtk.Grid):
         return len(self.slots[0]) if len(self.slots) > 0 else 0
 
 class Slot(Gtk.Box):
-    def __init__(self, amount, answer, doubleJeopardy=False):
+    def __init__(self, col, row, answer, doubleJeopardy=False): #TODO: double jeopardy aus nem model ziehen, nicht aus dem UI element
         Gtk.Box.__init__(self)
-        self.amount = amount
+        self.col = col
+        self.row = row
         self.answer = answer
 
         self.results = []
@@ -66,9 +67,9 @@ class Slot(Gtk.Box):
         self.queue_draw()
 
     def showAnswer(self, _target):
-        self.get_toplevel().showAnswer(self.answer)
+        self.get_toplevel().showAnswer(self.answer, self.row, self.col)
 
     def _createButton(self):
-        self._button = Gtk.Button(label = self.amount)
+        self._button = Gtk.Button(label = (self.row + 1) * 100)
         self._button.connect("clicked", self.showAnswer)
         return self._button

@@ -13,11 +13,13 @@ from .util import clearChildren
 
 class MainWindow(Gtk.Window):
 
-    def __init__(self, playerManager):
+    def __init__(self, playerManager, gameStateModel):
         Gtk.Window.__init__(self, title="Jeopardy")
         self.buzzIndicator = None
+        self.buzzerSignalId = None
 
         self.playerManager = playerManager
+        self.gameStateModel = gameStateModel
 
         self.mainContainer = Gtk.Box()
 
@@ -40,39 +42,57 @@ class MainWindow(Gtk.Window):
 
         self.gridContainer.show()
 
-    def showAnswer(self, answer):
+    def showAnswer(self, answer, row, col):
         self.gridContainer.hide()
 
         self.mainContainer.pack_start(answer, True, True, 0)
+        self.buzzerSignalId = self.connect("key-release-event", self.buzzered, row, col)
         answer.show()
+
+    def buzzered(self, widget, event, row, col):
+        if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
+            activePlayer = self.playerManager.getPlayerByKeyval(event.keyval)
+            self.buzzIndicator = QuestionRequestWindow(activePlayer)
+            self.buzzIndicator.placeAtBottomRightOf(self)
+
+            indicated = self.buzzIndicator.run()
+
+            self.buzzIndicator.destroy()
+            self.buzzIndicator = None
+
+            if indicated == QuestionRequestWindow.INCORRECT:
+                category = list(self.gameStateModel.getCategoryNames())[col]
+                self.gameStateModel.addResult(category, row, activePlayer, False, row * 100)
+
+            if indicated == QuestionRequestWindow.CORRECT:
+                category = list(self.gameStateModel.getCategoryNames())[col]
+                self.gameStateModel.addResult(category, row, activePlayer, True, row * 100)
+                self.showGrid()
+
+                if not self.buzzerSignalId is None:
+                    self.disconnect(self.buzzerSignalId)
+                    self.buzzerSignalId = None
 
     def onKeyRelease(self, widget, event, data = None):
         if event.keyval == Gdk.KEY_Escape:
             self.showGrid()
             return
-
-        if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
-            self.buzzIndicator = QuestionRequestWindow(self.playerManager.getPlayerByKeyval(event.keyval))
-            self.buzzIndicator.placeAtBottomRightOf(self)
-            self.buzzIndicator = None
             
 
-class QuestionRequestWindow(Gtk.Window):
+class QuestionRequestWindow(Gtk.Dialog):
+
+    CORRECT = 0
+    INCORRECT = 1
+    OOPS = 2
 
     def __init__(self, player):
-        Gtk.Window.__init__(self)
+        Gtk.Dialog.__init__(self)
 
-        self.buttonContainer = Gtk.Box()
-        self.buttonContainer.pack_end(Gtk.Button(label = "Oops"), False, False, 0)
-        self.buttonContainer.pack_end(Gtk.Button(label = "Correct"), False, False, 0)
-        self.buttonContainer.pack_end(Gtk.Button(label = "Wrong!"), False, False, 0)
+        self.add_button("Oops", QuestionRequestWindow.OOPS)
+        self.add_button("Correct", QuestionRequestWindow.CORRECT)
+        self.add_button("Wrong!", QuestionRequestWindow.INCORRECT)
 
-        self.mainContainer = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
-        self.mainContainer.pack_start(Gtk.Label(player.name + " has buzzered"), True, True, 0)
-        self.mainContainer.pack_end(self.buttonContainer, True, True, 0)
-
-        self.add(self.mainContainer)
-
+        self.get_content_area().add(Gtk.Label(player.name + " has buzzered"))
         self.show_all()
 
         self.set_decorated(False)

@@ -15,15 +15,6 @@ class Answer(Gtk.Box):
     def __init__(self, playerManager):
         Gtk.Box.__init__(self)
         self.playerManager = playerManager
-        self.hasQuestionRequest = False
-
-        self.connect("key-release-event", self._onKeyRelease)
-
-    def _onKeyRelease(self, widget, event, data = None):
-        #TODO: ist das nebenlaeufig?
-        if self.hasQuestionRequest:
-            return
-
 
 class TextAnswer(Answer):
     def __init__(self, playerManager, category, text):
@@ -35,4 +26,3 @@ class TextAnswer(Answer):
         self.pack_start(Gtk.Label(text), True, True, 0)
 
         self.show_all()
-
