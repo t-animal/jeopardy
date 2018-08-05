@@ -24,7 +24,7 @@ class GameStateModel(GObject.Object):
         GObject.Object.__init__(self)
 
         self.answersByCategory = OrderedDict()
-        self.results = {}
+        self.resultsByCategory = {}
 
     def addCategory(self, categoryName, answers):
         if len(self.answersByCategory) > 0:
@@ -34,7 +34,7 @@ class GameStateModel(GObject.Object):
                 raise ValueError("Answer count does not match existing answers!")
 
         self.answersByCategory[categoryName] = answers
-        self.results[categoryName] = [[] for _ in range(len(answers))]
+        self.resultsByCategory[categoryName] = [[] for _ in range(len(answers))]
         
         self.emit(SIG_GAME_MODEL_CHANGED)
 
@@ -54,20 +54,20 @@ class GameStateModel(GObject.Object):
         return self.answersByCategory[category]
 
     def hasResults(self, category, rowIndex):
-        return len(self.results[category][rowIndex]) > 0
+        return len(self.resultsByCategory[category][rowIndex]) > 0
 
     def getResults(self, category, rowIndex):
-        return self.results[category][rowIndex]
+        return self.resultsByCategory[category][rowIndex]
 
     def addResult(self, category, rowIndex, player, correct, points):
-        self.results[category][rowIndex].append(Result(player, correct, points))
+        self.resultsByCategory[category][rowIndex].append(Result(player, correct, points))
         self.emit(SIG_GAME_MODEL_CHANGED)
 
     def getPointsOfPlayer(self, player):
         runningSum = 0
         isOfPlayer = lambda result: result.player == player
 
-        for results in self.results.values():
+        for results in self.resultsByCategory.values():
             for result in filter(isOfPlayer, results):
                 if result.correct:
                     runningSum += result.points
