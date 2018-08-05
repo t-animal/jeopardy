@@ -60,8 +60,9 @@ class Slot(Gtk.Box):
             self.pack_start(self._button, True, True, 0)
         else:
             self._label.set_text("\n".join([result.getLabel() for result in self.results]))
-            self.pack_start(self._label, True, True, 0)
-            self._label.show()
+            if self._label.get_ancestor(Gtk.Box) is None:
+                self.pack_start(self._label, True, True, 0)
+                self._label.show()
 
         self.show_all()
         self.queue_draw()

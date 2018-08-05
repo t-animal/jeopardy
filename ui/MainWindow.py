@@ -117,6 +117,7 @@ class MainWindowInitializer():
 
         playerManager.connect(SIG_PLAYER_MODEL_CHANGED, self.initPlayers)
         gameStateModel.connect(SIG_GAME_MODEL_CHANGED, self.initGrid)
+        gameStateModel.connect(SIG_GAME_MODEL_CHANGED, self.initPlayers)
 
     def initMainWindow(self):
         self.initPlayers()
@@ -126,7 +127,8 @@ class MainWindowInitializer():
         clearChildren(self._mainWindow.playerNamesBox)
 
         for player in self.playerManager.getPlayers():
-            self._mainWindow.playerNamesBox.add(PlayerWidget(player.name))
+            points = self.gameStateModel.getPointsOfPlayer(player)
+            self._mainWindow.playerNamesBox.add(PlayerWidget(player.name, points))
 
     def initGrid(self, *event_args):
         cols = len(self.gameStateModel.getCategoryNames())

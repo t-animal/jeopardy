@@ -67,12 +67,13 @@ class GameStateModel(GObject.Object):
         runningSum = 0
         isOfPlayer = lambda result: result.player == player
 
-        for results in self.resultsByCategory.values():
-            for result in filter(isOfPlayer, results):
-                if result.correct:
-                    runningSum += result.points
-                else:
-                    runningSum -= result.points
+        for resultsByRow in self.resultsByCategory.values():
+            for results in resultsByRow:
+                for result in filter(isOfPlayer, results):
+                    if result.correct:
+                        runningSum += result.points
+                    else:
+                        runningSum -= result.points
 
         return runningSum
 
