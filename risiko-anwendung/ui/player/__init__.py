@@ -2,8 +2,8 @@ from ...util import createSignal
 
 SIG_PLAYER_SETUP_DONE = "playerSetupDone"
 
-from .PlayerNameDialog import PlayerNameDialog
-from .PlayerOverviewWindow import PlayerOverviewWindow
-from .PlayerWidget import PlayerWidget
+from .name_dialog import PlayerNameDialog
+from .overview import PlayerOverviewWindow
+from .widget import PlayerWidget
 
 createSignal(SIG_PLAYER_SETUP_DONE, PlayerOverviewWindow)

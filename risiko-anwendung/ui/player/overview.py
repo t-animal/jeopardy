@@ -4,7 +4,7 @@ from gi.repository import Gtk, Gdk, GObject
 
 import unicodedata
 
-from . import PlayerOverviewWindow, PlayerNameDialog, SIG_PLAYER_SETUP_DONE
+from . import PlayerNameDialog, SIG_PLAYER_SETUP_DONE
 from ...util import keyvalToKey
 
 class PlayerOverviewWindow(Gtk.Window):

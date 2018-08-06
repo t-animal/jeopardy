@@ -5,11 +5,14 @@ from gi.repository import Gtk, Gdk
 from collections import OrderedDict
 import yaml
 
-from .answers import AnswerFactory
-from .player import PlayerWidget
 from .grid import AnswerGrid
-from ..model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
-from ..util import clearChildren
+from .buzz_indicator import BuzzIndicator
+
+from ..player import PlayerWidget
+from ..answers import AnswerFactory
+
+from ...model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
+from ...util import clearChildren
 
 class MainWindow(Gtk.Window):
 
@@ -52,7 +55,7 @@ class MainWindow(Gtk.Window):
     def buzzered(self, widget, event, row, col):
         if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
             activePlayer = self.playerManager.getPlayerByKeyval(event.keyval)
-            self.buzzIndicator = QuestionRequestWindow(activePlayer)
+            self.buzzIndicator = BuzzIndicator(activePlayer)
             self.buzzIndicator.placeAtBottomRightOf(self)
 
             indicated = self.buzzIndicator.run()
@@ -60,11 +63,11 @@ class MainWindow(Gtk.Window):
             self.buzzIndicator.destroy()
             self.buzzIndicator = None
 
-            if indicated == QuestionRequestWindow.INCORRECT:
+            if indicated == BuzzIndicator.INCORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, False, (row + 1) * 100)
 
-            if indicated == QuestionRequestWindow.CORRECT:
+            if indicated == BuzzIndicator.CORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, True, (row + 1) * 100)
                 self.showGrid()
@@ -77,34 +80,6 @@ class MainWindow(Gtk.Window):
         if event.keyval == Gdk.KEY_Escape:
             self.showGrid()
             return
-            
-
-class QuestionRequestWindow(Gtk.Dialog):
-
-    CORRECT = 0
-    INCORRECT = 1
-    OOPS = 2
-
-    def __init__(self, player):
-        Gtk.Dialog.__init__(self)
-
-        self.add_button("Oops", QuestionRequestWindow.OOPS)
-        self.add_button("Correct", QuestionRequestWindow.CORRECT)
-        self.add_button("Wrong!", QuestionRequestWindow.INCORRECT)
-
-        self.get_content_area().add(Gtk.Label(player.name + " has buzzered"))
-        self.show_all()
-
-        self.set_decorated(False)
-        self.set_keep_above(True)
-
-    def placeAtBottomRightOf(self, otherWindow):
-        otherX, otherY = otherWindow.get_position()
-        otherWidth, otherHeight = otherWindow.get_size()
-        selfWidth, selfHeight = self.get_size()
-
-        self.move(otherX + otherWidth - selfWidth, otherY + otherHeight - selfHeight)
-
 
 class MainWindowInitializer():
 
