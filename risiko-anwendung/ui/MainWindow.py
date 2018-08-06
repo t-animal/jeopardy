@@ -8,8 +8,8 @@ import yaml
 from .answers import AnswerFactory
 from .player import PlayerWidget
 from .grid import AnswerGrid
-from .model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
-from .util import clearChildren
+from ..model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
+from ..util import clearChildren
 
 class MainWindow(Gtk.Window):
 

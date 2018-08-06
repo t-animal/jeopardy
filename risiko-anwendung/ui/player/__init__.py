@@ -1,4 +1,4 @@
-from ..util import createSignal
+from ...util import createSignal
 
 SIG_PLAYER_SETUP_DONE = "playerSetupDone"
 

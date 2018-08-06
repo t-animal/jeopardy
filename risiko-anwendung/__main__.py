@@ -2,8 +2,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 
-from .MainWindow import MainWindow, MainWindowInitializer
-from .player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
+from .ui.MainWindow import MainWindow, MainWindowInitializer
+from .ui.player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
 from .model import GameStateModel, GameStateLoader, PlayerManager, SIG_PLAYER_MODEL_CHANGED
 from .model.persistor import ModelPersistor, ModelLoader
 
