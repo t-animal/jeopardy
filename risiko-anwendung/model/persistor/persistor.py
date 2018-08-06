@@ -1,6 +1,6 @@
 import yaml
 
-from . import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
+from .. import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
 
 class ModelPersistor():
 
