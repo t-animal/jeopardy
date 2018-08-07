@@ -4,6 +4,7 @@ from gi.repository import Gtk, Gdk
 
 from .grid import AnswerGrid
 from .buzz_indicator import BuzzIndicator
+from .wager_prompt import WagerPrompt
 
 from ..player import PlayerWidget
 from ..answers import AnswerFactory
@@ -43,13 +44,22 @@ class MainWindow(Gtk.Window):
         self.gridContainer.show()
 
     def showAnswer(self, answer, row, col):
+        category = list(self.gameStateModel.getCategoryNames())[col]
+
+        wager = (row + 1) * 100
+        if self.gameStateModel.isDoubleJeopardy(category, row):
+            wagerPrompt = WagerPrompt(self)
+            wagerPrompt.run()
+            wager = int(wagerPrompt.wagerInput.get_value())
+            wagerPrompt.destroy()
+
         self.gridContainer.hide()
 
         self.mainContainer.pack_start(answer, True, True, 0)
-        self.buzzerSignalId = self.connect("key-release-event", self.buzzered, row, col)
+        self.buzzerSignalId = self.connect("key-release-event", self.buzzered, row, col, wager)
         answer.show()
 
-    def buzzered(self, widget, event, row, col):
+    def buzzered(self, widget, event, row, col, wager = 0):
         if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
             activePlayer = self.playerManager.getPlayerByKeyval(event.keyval)
             self.buzzIndicator = BuzzIndicator(activePlayer)
@@ -62,11 +72,11 @@ class MainWindow(Gtk.Window):
 
             if indicated == BuzzIndicator.INCORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
-                self.gameStateModel.addResult(category, row, activePlayer, False, (row + 1) * 100)
+                self.gameStateModel.addResult(category, row, activePlayer, False, wager)
 
             if indicated == BuzzIndicator.CORRECT:
                 category = list(self.gameStateModel.getCategoryNames())[col]
-                self.gameStateModel.addResult(category, row, activePlayer, True, (row + 1) * 100)
+                self.gameStateModel.addResult(category, row, activePlayer, True, wager)
                 self.showGrid()
 
                 if not self.buzzerSignalId is None:

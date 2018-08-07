@@ -1,6 +1,31 @@
 import yaml
 from collections import OrderedDict
 
+class SpecialField():
+    DOUBLE_JEOPARDY = 0
+    IMAGE_ANSWER = 1
+
+    def __init__(self, scalar, specialty):
+        self.scalar = scalar
+        self.specialty = specialty
+
+    def __str__(self):
+        return str(self.scalar)
+
+    @staticmethod
+    def isSpecialField(field):
+        return type(field) == SpecialField
+
+    @staticmethod
+    def doubleJeopardyConstructor(loader, node):
+         value = loader.construct_scalar(node)
+         return SpecialField(value, SpecialField.DOUBLE_JEOPARDY)
+
+    @staticmethod
+    def imageAnswerConstructor(loader, node):
+         value = loader.construct_scalar(node)
+         return SpecialField(value, SpecialField.IMAGE_ANSWER)
+
 class GameStateLoader():
 
     def __init__(self, gameStateModel):
