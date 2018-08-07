@@ -8,7 +8,7 @@ class BuzzIndicator(Gtk.Dialog):
     INCORRECT = 1
     OOPS = 2
 
-    def __init__(self, player):
+    def __init__(self, player, parent):
         Gtk.Dialog.__init__(self)
 
         self.add_button("Oops", BuzzIndicator.OOPS)
@@ -16,10 +16,12 @@ class BuzzIndicator(Gtk.Dialog):
         self.add_button("Wrong!", BuzzIndicator.INCORRECT)
 
         self.get_content_area().add(Gtk.Label(player.name + " has buzzered"))
-        self.show_all()
 
+        self.set_transient_for(parent)
+        self.set_modal(True)
         self.set_decorated(False)
         self.set_keep_above(True)
+        self.show_all()
 
     def placeAtBottomRightOf(self, otherWindow):
         otherX, otherY = otherWindow.get_position()

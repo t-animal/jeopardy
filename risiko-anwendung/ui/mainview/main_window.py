@@ -62,7 +62,7 @@ class MainWindow(Gtk.Window):
     def buzzered(self, widget, event, row, col, wager = 0):
         if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
             activePlayer = self.playerManager.getPlayerByKeyval(event.keyval)
-            self.buzzIndicator = BuzzIndicator(activePlayer)
+            self.buzzIndicator = BuzzIndicator(activePlayer, self)
             self.buzzIndicator.placeAtBottomRightOf(self)
 
             indicated = self.buzzIndicator.run()
