@@ -58,6 +58,7 @@ class MainWindow(Gtk.Window):
         self.mainContainer.pack_start(answer, True, True, 0)
         self.buzzerSignalId = self.connect("key-release-event", self.buzzered, row, col, wager)
         answer.show()
+        answer.packed()
 
     def buzzered(self, widget, event, row, col, wager = 0):
         if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
