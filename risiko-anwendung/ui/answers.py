@@ -10,7 +10,7 @@ class AnswerFactory:
         self.playerManager = playerManager
 
     def createAnswer(self, category, answer):
-        if SpecialField.isSpecialField(answer) and answer.specialty == SpecialField.IMAGE_ANSWER:
+        if SpecialField.isSpecialField(answer) and SpecialField.IMAGE_ANSWER in answer.specialties:
             return ImageAnswer(self.playerManager, category, answer.scalar)
 
         return TextAnswer(self.playerManager, category, answer)

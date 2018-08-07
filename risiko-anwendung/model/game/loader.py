@@ -7,7 +7,7 @@ class SpecialField():
 
     def __init__(self, scalar, specialty):
         self.scalar = scalar
-        self.specialty = specialty
+        self.specialties = [specialty]
 
     def __str__(self):
         return str(self.scalar)
@@ -15,6 +15,15 @@ class SpecialField():
     @staticmethod
     def isSpecialField(field):
         return type(field) == SpecialField
+
+    @staticmethod
+    def makeDoubleJeopardyAndConstructor(wrappedConstructor):
+        def newConstructor(loader, node):
+            node = wrappedConstructor(loader, node)
+            node.specialties += [SpecialField.DOUBLE_JEOPARDY]
+            return node
+        
+        return newConstructor
 
     @staticmethod
     def doubleJeopardyConstructor(loader, node):

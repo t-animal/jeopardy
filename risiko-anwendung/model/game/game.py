@@ -65,7 +65,7 @@ class GameStateModel(GObject.Object):
 
     def isDoubleJeopardy(self, category, rowIndex):
         answer = self.getAnswers(category)[rowIndex]
-        return SpecialField.isSpecialField(answer) and answer.specialty == SpecialField.DOUBLE_JEOPARDY
+        return SpecialField.isSpecialField(answer) and SpecialField.DOUBLE_JEOPARDY in answer.specialties
 
     def getPointsOfPlayer(self, player):
         runningSum = 0
