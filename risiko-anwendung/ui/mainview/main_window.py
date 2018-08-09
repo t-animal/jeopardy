@@ -41,6 +41,10 @@ class MainWindow(Gtk.Window):
             if not child == self.gridContainer:
                 self.mainContainer.remove(child)
 
+        if not self.buzzerSignalId is None:
+            self.disconnect(self.buzzerSignalId)
+            self.buzzerSignalId = None
+
         self.gridContainer.show()
 
     def showAnswer(self, answer, row, col):
@@ -79,10 +83,6 @@ class MainWindow(Gtk.Window):
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, True, wager)
                 self.showGrid()
-
-                if not self.buzzerSignalId is None:
-                    self.disconnect(self.buzzerSignalId)
-                    self.buzzerSignalId = None
 
     def onKeyRelease(self, widget, event, data = None):
         if event.keyval == Gdk.KEY_Escape:
