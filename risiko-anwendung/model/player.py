@@ -8,10 +8,14 @@ from . import SIG_PLAYER_MODEL_CHANGED
 from ..util import keyvalToKey
 
 class Player():
+    RUNNING_ID = 0
 
     def __init__(self, name, key):
         self.name = name
         self.key = key
+        self.id = Player.RUNNING_ID
+        Player.RUNNING_ID += 1
+
 
 class PlayerManager(GObject.Object):
 
