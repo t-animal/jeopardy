@@ -34,8 +34,6 @@ class MainWindow(Gtk.Window):
         self.mainContainer.pack_start(self.gridContainer, True, True, 0)
         self.add(self.mainContainer)
 
-        self.connect("key-release-event", self.onKeyRelease)
-
     def showGrid(self):
         for child in self.mainContainer.get_children():
             if not child == self.gridContainer:
@@ -65,6 +63,14 @@ class MainWindow(Gtk.Window):
         answer.packed()
 
     def buzzered(self, widget, event, row, col, wager = 0):
+        if event.keyval == Gdk.KEY_Escape:
+            if not event.state & Gdk.ModifierType.SHIFT_MASK:
+                category = list(self.gameStateModel.getCategoryNames())[col]
+                self.gameStateModel.setNobodyKnew(category, row)
+
+            self.showGrid()
+            return
+
         if self.playerManager.isPlayerKeyval(event.keyval) and self.buzzIndicator is None:
             activePlayer = self.playerManager.getPlayerByKeyval(event.keyval)
             self.buzzIndicator = BuzzIndicator(activePlayer, self)
@@ -83,11 +89,6 @@ class MainWindow(Gtk.Window):
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, True, wager)
                 self.showGrid()
-
-    def onKeyRelease(self, widget, event, data = None):
-        if event.keyval == Gdk.KEY_Escape:
-            self.showGrid()
-            return
 
 class MainWindowInitializer():
 

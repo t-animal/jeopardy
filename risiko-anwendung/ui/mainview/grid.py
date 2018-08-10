@@ -59,6 +59,9 @@ class Slot(Gtk.Box):
         if len(self.results) == 0:
             self.pack_start(self._button, True, True, 0)
         else:
+            if any(map(lambda r: type(r) == NobodyKnewResult, self.results)):
+                self._label.get_style_context().add_class("nobody-knew")
+
             self._label.set_text("\n".join([result.getLabel() for result in self.results]))
             if self._label.get_ancestor(Gtk.Box) is None:
                 self.pack_start(self._label, True, True, 0)
