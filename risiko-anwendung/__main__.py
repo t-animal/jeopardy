@@ -32,8 +32,11 @@ class FullscreenManager:
 
     def _applyStateToWindow(self, window):
         if self.fullscreenEnabled:
-            self.positionBeforeFullscreen[window] = window.get_position()
-            window.fullscreen_on_monitor(window.get_screen(), 1)
+            if Gdk.Screen.get_default().get_n_monitors() > 1:
+                self.positionBeforeFullscreen[window] = window.get_position()
+                window.fullscreen_on_monitor(window.get_screen(), 1)
+            else:
+                window.fullscreen()
         else:
             window.unfullscreen()
             if window in self.positionBeforeFullscreen:
