@@ -78,3 +78,7 @@ label {
 .player-4, .player-4 * {
 	background-color: rgb(190, 37, 190);
 }
+
+.final-random-number {
+	font-size: 50px;
+}

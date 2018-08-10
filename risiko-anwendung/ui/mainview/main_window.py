@@ -8,6 +8,7 @@ from .wager_prompt import WagerPrompt
 
 from ..player import PlayerWidget
 from ..answers import AnswerFactory
+from ..rng import RngWindow
 
 from ...model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
 from ...util import clearChildren
@@ -33,6 +34,8 @@ class MainWindow(Gtk.Window):
 
         self.mainContainer.pack_start(self.gridContainer, True, True, 0)
         self.add(self.mainContainer)
+
+        self.connect("key-release-event", self._keyReleaseEvent)
 
     def showGrid(self):
         for child in self.mainContainer.get_children():
@@ -89,6 +92,15 @@ class MainWindow(Gtk.Window):
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, True, wager)
                 self.showGrid()
+    
+
+    def _keyReleaseEvent(self, widget, event):
+        print("Keys")
+        if event.keyval == Gdk.KEY_F12:
+            playerCount = len(self.playerManager.getPlayers())
+            rng = RngWindow(upperLimit = playerCount + 1)
+            rng.present()
+            rng.random(playerCount + 1)
 
 class MainWindowInitializer():
 

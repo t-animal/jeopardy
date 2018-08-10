@@ -12,7 +12,7 @@ def clearChildren(widget):
 class RngWindow(Gtk.Window):
 
     def __init__(self, totalNumbers = 40, upperLimit = 100, duration = 800):
-        Gtk.Window.__init__(self)
+        Gtk.Window.__init__(self, title="RNG")
         self.revealer = Gtk.Revealer(expand=True)
         self.add(self.revealer)
 
@@ -45,7 +45,7 @@ class RngWindow(Gtk.Window):
                     lambda: GLib.idle_add(getFinalizationClosure(label))).start()
                 return
             
-            label = Gtk.Label(str(random.choices(range(self.upperLimit))[0]))
+            label = Gtk.Label(str(random.choices(range(1, self.upperLimit))[0]))
             self.revealer.add(label)
 
             self.revealer.set_transition_duration(self.duration/(randomsLeft**1.2)+1)
