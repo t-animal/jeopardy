@@ -2,30 +2,42 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
+from ...model.game import NobodyKnewResult
 from ..answers import TextAnswer
 
-class AnswerGrid(Gtk.Grid):
+class AnswerGrid(Gtk.Box):
     def __init__(self):
-        Gtk.Grid.__init__(self)
+        Gtk.Box.__init__(self)
+        self.headlineGrid = Gtk.Grid(name="headlineGrid")
+        self.answerGrid = Gtk.Grid(name="answerGrid")
 
-        self.set_column_homogeneous(True)
-        self.set_row_homogeneous(True)
+        self.headlineGrid.set_column_homogeneous(True)
+        self.answerGrid.set_column_homogeneous(True)
+        self.answerGrid.set_row_homogeneous(True)
+
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        self.pack_start(self.headlineGrid, False, False, 0)
+        self.pack_start(self.answerGrid, True, True, 0)
 
         self.initComponents()
     
     def initComponents(self, rows = 5, cols = 5):
-        self.headline = tuple([Gtk.Button(label="Headline " + str(i)) for i in range(1, rows + 1)])
+        self.headline = tuple([Gtk.Label("Headline " + str(i), name="headline") for i in range(1, rows + 1)])
 
         createRow = lambda row: tuple([Slot(col, row, None) for col in range(0, cols)]) #TODO: col row einheitlich
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
-        for child in self.get_children():
-            self.remove(child)
+        for child in self.headlineGrid.get_children():
+            self.headlineGrid.remove(child)
+        for child in self.answerGrid.get_children():
+            self.answerGrid.remove(child)
 
         for col in range(0, cols):
-            self.attach(self.headline[col], col, 0, 1, 1)
+            self.headlineGrid.attach(self.headline[col], col, 0, 1, 1)
             for row in range(0, rows):
-                self.attach(self.slots[row][col], col, row + 1, 1, 1)
+                self.answerGrid.attach(self.slots[row][col], col, row + 1, 1, 1)
+
+        self.show_all()
 
     @property
     def cols(self):
@@ -44,12 +56,12 @@ class Slot(Gtk.Box):
 
         self.results = []
         self._button = self._createButton()
-        self._label = Gtk.Label("")
+        self._label = Gtk.Label("", name="results-label")
 
         self.repack()
 
     def addResult(self, result):
-        self.results.apend(result)
+        self.results.append(result)
         self.repack()
 
     def repack(self):
@@ -59,6 +71,10 @@ class Slot(Gtk.Box):
         if len(self.results) == 0:
             self.pack_start(self._button, True, True, 0)
         else:
+            if any(map(lambda r: r.correct, self.results)):
+                winnerId = "player-" + str(next(filter(lambda r: r.correct, self.results)).player.id)
+                self._label.get_style_context().add_class(winnerId)
+
             if any(map(lambda r: type(r) == NobodyKnewResult, self.results)):
                 self._label.get_style_context().add_class("nobody-knew")
 

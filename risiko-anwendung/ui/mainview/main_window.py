@@ -26,7 +26,7 @@ class MainWindow(Gtk.Window):
 
         self.gridContainer = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
         self.grid = AnswerGrid()
-        self.playerNamesBox = Gtk.Box()
+        self.playerNamesBox = Gtk.Box(name="playerNamesBox")
 
         self.gridContainer.pack_start(self.grid, True, True, 0)
         self.gridContainer.pack_end(self.playerNamesBox, False, False, 0)
@@ -112,7 +112,9 @@ class MainWindowInitializer():
 
         for player in self.playerManager.getPlayers():
             points = self.gameStateModel.getPointsOfPlayer(player)
-            self._mainWindow.playerNamesBox.add(PlayerWidget(player.name, points))
+            widget = PlayerWidget(player.name, points)
+            widget.get_style_context().add_class("player-" + str(player.id))
+            self._mainWindow.playerNamesBox.pack_start(widget, False, False, 0)
 
     def initGrid(self, *event_args):
         cols = len(self.gameStateModel.getCategoryNames())
@@ -123,7 +125,7 @@ class MainWindowInitializer():
             if not self._grid.rows == len(answers) or not self._grid.cols == cols:
                 self._grid.initComponents(len(answers), cols)
 
-            self._grid.headline[col].set_label(category)
+            self._grid.headline[col].set_text(category)
             for row, answer in enumerate(self.gameStateModel.getAnswers(category)):
                 self._grid.slots[row][col].answer = self.answerFactory.createAnswer(category, answer)
                 self._grid.slots[row][col].results = self.gameStateModel.getResults(category, row)

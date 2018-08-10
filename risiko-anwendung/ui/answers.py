@@ -22,7 +22,7 @@ class Answer(Gtk.Box):
         self.playerManager = playerManager
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
-        self.pack_start(Gtk.Label(category), False, True, 0)
+        self.pack_start(Gtk.Label(category, name="headline"), False, True, 0)
     
     def packed(self):
         pass
