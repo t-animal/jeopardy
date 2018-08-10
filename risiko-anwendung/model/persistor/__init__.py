@@ -1,6 +1,8 @@
 
-from .helpers import addOrderedDictToYamlInterpreter
+from .helpers import addOrderedDictToYamlInterpreter, addNobodyKnewResultToYamlInterpreter
 addOrderedDictToYamlInterpreter()
+addNobodyKnewResultToYamlInterpreter()
 del addOrderedDictToYamlInterpreter
+del addNobodyKnewResultToYamlInterpreter
 
 from .persistor import ModelPersistor, ModelLoader

@@ -1,5 +1,6 @@
 import yaml
 
+from ..game import NobodyKnewResult
 from .. import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
 
 class ModelPersistor():
@@ -32,7 +33,14 @@ class ModelPersistor():
 					continue
 
 				results = self.gameStateModel.getResults(category, row)
-				serializable = [{"player": r.player.key, "correct": r.correct, "wager": r.points} for r in results]
+				serializable = []
+				for result in results:
+					if type(result) == NobodyKnewResult:
+						serializable.append(result)
+					else:
+						serializable.append({"player": result.player.key,
+						  	"correct": result.correct,
+							"wager": result.points})
 				state["results"]["{}/{}".format(row, col)] = serializable
 
 
@@ -65,5 +73,8 @@ class ModelLoader():
 		for index, results in state["results"].items():
 			row, col = map(int, index.split("/"))
 			for result in results:
-				self.gameStateModel.addResult(categories[col], row, 
-					self.playerManager.getPlayerByKey(result["player"]), result["correct"], result["wager"])
+				if type(result) == NobodyKnewResult:
+					self.gameStateModel.setNobodyKnew(categories[col], row)
+				else:
+					self.gameStateModel.addResult(categories[col], row, 
+						self.playerManager.getPlayerByKey(result["player"]), result["correct"], result["wager"])

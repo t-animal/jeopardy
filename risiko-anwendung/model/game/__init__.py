@@ -1,5 +1,5 @@
 
-from .game import GameStateModel
+from .game import GameStateModel, NobodyKnewResult
 from .loader import GameStateLoader, SpecialField
 
 from yaml import SafeLoader, SafeDumper

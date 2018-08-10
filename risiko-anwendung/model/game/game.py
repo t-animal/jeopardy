@@ -18,6 +18,16 @@ class Result():
     def getLabel(self):
         return "{}{} for {}".format("+" if self.correct else "-", self.points, self.player.name)
 
+class NobodyKnewResult():
+
+    def __init__(self):
+        self.correct = False
+        self.points = 0
+        self.player = None
+
+    def getLabel(self):
+        return "Meh."
+
 class GameStateModel(GObject.Object):
 
     def __init__(self):
@@ -61,6 +71,10 @@ class GameStateModel(GObject.Object):
 
     def addResult(self, category, rowIndex, player, correct, points):
         self.resultsByCategory[category][rowIndex].append(Result(player, correct, points))
+        self.emit(SIG_GAME_MODEL_CHANGED)
+    
+    def setNobodyKnew(self, category, rowIndex):
+        self.resultsByCategory[category][rowIndex].append(NobodyKnewResult())
         self.emit(SIG_GAME_MODEL_CHANGED)
 
     def isDoubleJeopardy(self, category, rowIndex):
