@@ -82,4 +82,9 @@ if __name__ == "__main__":
 
     mainWindow.connect("destroy", Gtk.main_quit)
     playerWindow.connect(SIG_PLAYER_SETUP_DONE, lambda x: mainWindow.present())
-    Gtk.main()
+
+    try:
+        Gtk.main()
+    except KeyboardInterrupt:
+        pass
+    
