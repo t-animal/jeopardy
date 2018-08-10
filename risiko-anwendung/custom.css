@@ -27,10 +27,10 @@ label {
 	margin: 30px;
 }
 
-
 #answerGrid {
 	margin: 5px;
-	border:1px solid white
+	border: solid white;
+	border-width: 2px 1px;
 }
 
 #answerGrid button label {
