@@ -1,0 +1,80 @@
+/*
+You can type here any CSS rule recognized by GTK+.
+You can temporarily disable this custom CSS by clicking on the “Pause” button above.
+
+Changes are applied instantly and globally, for the whole application.
+*/
+
+* {
+	background: #eee;
+	color: #222;
+	font-size: 20px;
+}
+
+label { 
+	margin: 5px;
+}
+
+#headline {
+	color: #000;
+	font-weight: bold;
+	margin: 20px;
+}
+
+#headlineGrid #headline {
+	color: #000;
+	font-weight: bold;
+	margin: 30px;
+}
+
+
+#answerGrid {
+	margin: 5px;
+	border: solid black;
+	border-width: 2px 1px;
+}
+
+#answerGrid button label {
+	border: none;
+}
+
+#answerGrid button,
+#answerGrid label {
+	margin: 0px;
+	border: solid;
+	border-width: 0 1px 1px 1px;
+	border-color: #ddd #333;
+}
+
+#playerNamesBox {
+	margin: 5px;
+}
+
+#playerNamesBox box {
+	margin-right: 30px;
+	border-radius: 5px;
+}
+
+.nobody-knew, .nobody-knew * {
+	background-color: #aaa;
+}
+
+.player-0, .player-0 * {
+	background-color: rgb(241, 36, 36);
+}
+
+.player-1, .player-1 * {
+	background-color: rgb(15, 179, 15);
+}
+
+.player-2, .player-2 * {
+	background-color: rgb(226, 226, 10);
+}
+
+.player-3, .player-3 * {
+	background-color: rgb(47, 47, 230);
+}
+
+.player-4, .player-4 * {
+	background-color: rgb(190, 37, 190);
+}
