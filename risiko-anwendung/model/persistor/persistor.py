@@ -1,3 +1,4 @@
+import os
 import yaml
 
 from ..game import NobodyKnewResult
@@ -52,11 +53,18 @@ class ModelLoader():
 		self.gameStateModel = gameStateModel
 
 	def loadModel(self):
+		if not os.path.isfile(self.filename):
+			return
+
+		state = None
 		with open(self.filename, "r") as file:
 			stateDocuments = yaml.safe_load_all(file)
 
 			for state in stateDocuments:
 				pass
+		
+		if state is None:
+			return
 
 		if "players" in state:
 			self.loadPlayers(state)
