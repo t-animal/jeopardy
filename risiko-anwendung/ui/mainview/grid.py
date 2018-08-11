@@ -68,9 +68,13 @@ class Slot(Gtk.Box):
         if self._button.get_ancestor(Gtk.Box) == self:
             self.remove(self._button)
 
+        if self._label.get_ancestor(Gtk.Box) == self:
+            self.remove(self._label)
+
         if len(self.results) == 0:
             self.pack_start(self._button, True, True, 0)
         else:
+            self._label = Gtk.Label("", name="results-label")
             if any(map(lambda r: r.correct, self.results)):
                 winnerId = "player-" + str(next(filter(lambda r: r.correct, self.results)).player.id)
                 self._label.get_style_context().add_class(winnerId)
@@ -79,9 +83,7 @@ class Slot(Gtk.Box):
                 self._label.get_style_context().add_class("nobody-knew")
 
             self._label.set_text("\n".join([result.getLabel() for result in self.results]))
-            if self._label.get_ancestor(Gtk.Box) is None:
-                self.pack_start(self._label, True, True, 0)
-                self._label.show()
+            self.pack_start(self._label, True, True, 0)
 
         self.show_all()
         self.queue_draw()

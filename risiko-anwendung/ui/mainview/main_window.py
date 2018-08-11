@@ -15,13 +15,14 @@ from ...util import clearChildren
 
 class MainWindow(Gtk.Window):
 
-    def __init__(self, playerManager, gameStateModel):
+    def __init__(self, playerManager, gameStateModel, history):
         Gtk.Window.__init__(self, title="Jeopardy")
         self.buzzIndicator = None
         self.buzzerSignalId = None
 
         self.playerManager = playerManager
         self.gameStateModel = gameStateModel
+        self.history = history
 
         self.mainContainer = Gtk.Box()
 
@@ -95,12 +96,14 @@ class MainWindow(Gtk.Window):
     
 
     def _keyReleaseEvent(self, widget, event):
-        print("Keys")
         if event.keyval == Gdk.KEY_F12:
             playerCount = len(self.playerManager.getPlayers())
             rng = RngWindow(upperLimit = playerCount + 1)
             rng.present()
             rng.random(playerCount + 1)
+
+        if event.keyval == Gdk.KEY_F10:
+            self.history.undo()
 
 class MainWindowInitializer():
 

@@ -11,6 +11,8 @@ from .ui.player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
 from .model import GameStateModel, GameStateLoader, PlayerManager, SIG_PLAYER_MODEL_CHANGED
 from .model.persistor import ModelPersistor, ModelLoader
 
+from .model.game.history import HistoryRestorer
+
 def getArguments(argv):
     parser = ArgumentParser(description = "Jeopardy")
     parser.add_argument("--logFile")
@@ -30,7 +32,9 @@ if __name__ == "__main__":
     ModelLoader(playerManager, gameStateModel, args.logFile).loadModel()
     ModelPersistor(playerManager, gameStateModel, args.logFile)
 
-    mainWindow = MainWindow(playerManager, gameStateModel)
+    history = HistoryRestorer(gameStateModel)
+
+    mainWindow = MainWindow(playerManager, gameStateModel, history)
     playerWindow = PlayerOverviewWindow(playerManager)
 
     initer = MainWindowInitializer(playerManager, gameStateModel, mainWindow)
