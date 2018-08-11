@@ -8,7 +8,7 @@ Changes are applied instantly and globally, for the whole application.
 * {
 	background: #eee;
 	color: #222;
-	font-size: 20px;
+	font-size: 30px;
 }
 
 label { 
@@ -18,7 +18,7 @@ label {
 #headline {
 	color: #000;
 	font-weight: bold;
-	margin: 20px;
+	margin: 30px;
 }
 
 #headlineGrid #headline {
@@ -80,5 +80,5 @@ label {
 }
 
 .final-random-number {
-	font-size: 50px;
+	font-size: 60px;
 }
