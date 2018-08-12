@@ -49,6 +49,8 @@ class MainWindow(Gtk.Window):
 
         self.gridContainer.show()
 
+        self.grid.focus()
+
     def showAnswer(self, answer, row, col):
         category = list(self.gameStateModel.getCategoryNames())[col]
 

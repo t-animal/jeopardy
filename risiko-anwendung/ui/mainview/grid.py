@@ -24,7 +24,7 @@ class AnswerGrid(Gtk.Box):
     def initComponents(self, rows = 5, cols = 5):
         self.headline = tuple([Gtk.Label("Headline " + str(i), name="headline") for i in range(1, rows + 1)])
 
-        createRow = lambda row: tuple([Slot(col, row, None) for col in range(0, cols)]) #TODO: col row einheitlich
+        createRow = lambda row: tuple([Slot(col, row, None) for col in range(0, cols)]) #TODO: reihenfolge col row einheitlich
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
         for child in self.headlineGrid.get_children():
@@ -38,6 +38,17 @@ class AnswerGrid(Gtk.Box):
                 self.answerGrid.attach(self.slots[row][col], col, row + 1, 1, 1)
 
         self.show_all()
+    
+    def focus(self):
+        for row in self.slots:
+            buttons = [slot._button for slot in filter(lambda x: x.hasButton(), row)]
+            if len(buttons) == 0:
+                continue
+            print('grabbing')
+            print(buttons[0])
+            buttons[0].set_can_focus(True)
+            buttons[0].grab_focus()
+            return
 
     @property
     def cols(self):
@@ -63,6 +74,9 @@ class Slot(Gtk.Box):
     def addResult(self, result):
         self.results.append(result)
         self.repack()
+    
+    def hasButton(self):
+        return self._button.get_ancestor(Gtk.Box) == self
 
     def repack(self):
         if self._button.get_ancestor(Gtk.Box) == self:

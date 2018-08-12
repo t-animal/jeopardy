@@ -21,15 +21,15 @@ class PlayerOverviewWindow(Gtk.Window):
         self.playerList.set_enable_search(False)
         self.playerList.set_headers_visible(True)
 
-        beginButton = Gtk.Button("Begin!")
-        beginButton.connect("clicked", lambda x: self.emit(SIG_PLAYER_SETUP_DONE))
+        self.beginButton = Gtk.Button("Begin!")
+        self.beginButton.connect("clicked", lambda x: self.emit(SIG_PLAYER_SETUP_DONE))
         
         box = Gtk.Box()
         box.set_orientation(Gtk.Orientation.VERTICAL)
         box.pack_start(Gtk.Label("Player management"), False, False, 0)
         box.pack_start(self.playerList, True, True, 0)
         box.pack_start(Gtk.Label("Press any key to add a new player"), False, False, 0)
-        box.pack_end(beginButton, False, False, 0)
+        box.pack_end(self.beginButton, False, False, 0)
 
         self.connect("key-release-event", self._onKeyRelease)
         self.add(box)
@@ -49,6 +49,8 @@ class PlayerOverviewWindow(Gtk.Window):
         if response == Gtk.ResponseType.OK and not dialog.getName().strip() == "":
             self.playerManager.addPlayer(dialog.getName().strip(), key)
             self.updateList()
+        
+        self.beginButton.grab_focus()
 
     def removeSelectedPlayer(self):
         model, treeiter = self.playerList.get_selection().get_selected()

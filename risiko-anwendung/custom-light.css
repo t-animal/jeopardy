@@ -82,3 +82,8 @@ label {
 .final-random-number {
 	font-size: 60px;
 }
+
+#answerGrid button:focus,
+button:focus {
+	border: 3px solid #000;
+}
