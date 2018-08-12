@@ -59,6 +59,9 @@ void loop() {
   for(int i = 0; i < initializedPins; i++) {
     if(digitalRead(inputPins[i]) == LOW){
       Keyboard.print((char) ('a' + i));
+      while(digitalRead(inputPins[i]) == LOW){
+        delay(50);
+      }
     }
   }
 }
