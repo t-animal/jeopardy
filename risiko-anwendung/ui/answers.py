@@ -44,10 +44,18 @@ class ImageAnswer(Answer):
 
     def packed(self):
         allocation = self.get_toplevel().get_allocation()
-        desired_width = allocation.width * 0.8
-        desired_height = allocation.height * 0.8 #TODO: keep aspect ratio
+        imageWidth = self.pixbuf.get_width()
+        imageHeight = self.pixbuf.get_height()
 
-        pixbuf = self.pixbuf.scale_simple(desired_width, desired_height, GdkPixbuf.InterpType.BILINEAR)
+        desiredWidth = allocation.width * 0.8
+        desiredHeight = imageHeight / imageWidth * desiredWidth
+
+        if desiredHeight > allocation.height * 0.8:
+            newDesiredHeight = allocation.height * 0.8
+            desiredWidth = desiredWidth * newDesiredHeight / desiredHeight
+            desiredHeight = newDesiredHeight
+
+        pixbuf = self.pixbuf.scale_simple(desiredWidth, desiredHeight, GdkPixbuf.InterpType.BILINEAR)
         newImage = Gtk.Image.new_from_pixbuf(pixbuf)
         if not self.image is None:
             self.remove(self.image)
