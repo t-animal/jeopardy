@@ -65,7 +65,12 @@ if __name__ == "__main__":
     playerWindow.present()
 
     mainWindow.connect("destroy", Gtk.main_quit)
-    playerWindow.connect(SIG_PLAYER_SETUP_DONE, lambda x: mainWindow.present())
+    
+    def beginGame(*args):
+        mainWindow.present()
+        playerWindow.minimize()
+
+    playerWindow.connect(SIG_PLAYER_SETUP_DONE, beginGame)
 
     print("""
         Keys on main screen:
