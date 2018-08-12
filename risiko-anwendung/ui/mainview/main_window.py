@@ -70,10 +70,17 @@ class MainWindow(Gtk.Window):
 
     def buzzered(self, widget, event, row, col, wager = 0):
         if event.keyval == Gdk.KEY_Escape:
-            if event.state & Gdk.ModifierType.SHIFT_MASK:
-                category = list(self.gameStateModel.getCategoryNames())[col]
-                self.gameStateModel.setNobodyKnew(category, row)
-
+            if not self.buzzIndicator is None:
+                self.buzzIndicator.destroy()
+                self.buzzIndicator = None
+                return
+            
+            self.showGrid()
+            return
+        
+        if event.keyval == Gdk.KEY_F8:
+            category = list(self.gameStateModel.getCategoryNames())[col]
+            self.gameStateModel.setNobodyKnew(category, row)
             self.showGrid()
             return
 
