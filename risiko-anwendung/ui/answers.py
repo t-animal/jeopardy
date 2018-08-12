@@ -22,7 +22,9 @@ class Answer(Gtk.Box):
         self.playerManager = playerManager
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
-        self.pack_start(Gtk.Label(category, name="headline"), False, True, 0)
+        
+        label = Gtk.Label(category, name="headline") 
+        self.pack_start(label, False, True, 0)
     
     def packed(self):
         pass
@@ -31,7 +33,11 @@ class TextAnswer(Answer):
     def __init__(self, playerManager, category, text):
         super().__init__(playerManager, category)
 
-        self.pack_start(Gtk.Label(text), True, True, 0)
+        label = Gtk.Label(text)
+        label.set_line_wrap(True)
+        label.set_line_wrap_mode(2)
+        label.set_max_width_chars(20)
+        self.pack_start(label, True, True, 0)
 
         self.show_all()
 
