@@ -28,4 +28,4 @@ class BuzzIndicator(Gtk.Dialog):
         otherWidth, otherHeight = otherWindow.get_size()
         selfWidth, selfHeight = self.get_size()
 
-        self.move(otherX + otherWidth - selfWidth, otherY + otherHeight - selfHeight)
+        self.move(otherX + otherWidth - selfWidth - 50, otherY + otherHeight - selfHeight - 50)

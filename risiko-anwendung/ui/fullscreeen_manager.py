@@ -31,8 +31,8 @@ class FullscreenManager:
                 self.positionBeforeFullscreen[window] = window.get_position()
                 window.fullscreen_on_monitor(window.get_screen(), 1)
             else:
-                window.set_keep_above(True)
                 window.fullscreen()
+            window.set_keep_above(True)
         else:
             window.unfullscreen()
             window.set_keep_above(False)
