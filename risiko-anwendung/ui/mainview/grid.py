@@ -89,6 +89,8 @@ class Slot(Gtk.Box):
             self.pack_start(self._button, True, True, 0)
         else:
             self._label = Gtk.Label("", name="results-label")
+            self._label.set_ellipsize(2)
+            self._label.set_lines(2)
             if any(map(lambda r: r.correct, self.results)):
                 winnerId = "player-" + str(next(filter(lambda r: r.correct, self.results)).player.id)
                 self._label.get_style_context().add_class(winnerId)
@@ -96,7 +98,14 @@ class Slot(Gtk.Box):
             if any(map(lambda r: type(r) == NobodyKnewResult, self.results)):
                 self._label.get_style_context().add_class("nobody-knew")
 
-            self._label.set_text("\n".join([result.getLabel() for result in self.results]))
+            if len(self.results) < 5:
+                self._label.set_text("\n".join([result.getLabel() for result in self.results]))
+            else:
+                text = "\n".join([result.getLabel() for result in self.results[:3]])
+                text += "\n...\n"
+                text += self.results[-1].getLabel()
+                self._label.set_text(text)
+
             self.pack_start(self._label, True, True, 0)
 
         self.show_all()

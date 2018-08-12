@@ -68,7 +68,7 @@ if __name__ == "__main__":
     
     def beginGame(*args):
         mainWindow.present()
-        playerWindow.minimize()
+        playerWindow.iconify()
 
     playerWindow.connect(SIG_PLAYER_SETUP_DONE, beginGame)
 
