@@ -68,7 +68,7 @@ class MainWindow(Gtk.Window):
 
     def buzzered(self, widget, event, row, col, wager = 0):
         if event.keyval == Gdk.KEY_Escape:
-            if not event.state & Gdk.ModifierType.SHIFT_MASK:
+            if event.state & Gdk.ModifierType.SHIFT_MASK:
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.setNobodyKnew(category, row)
 
