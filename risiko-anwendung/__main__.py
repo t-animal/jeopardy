@@ -67,6 +67,15 @@ if __name__ == "__main__":
     mainWindow.connect("destroy", Gtk.main_quit)
     playerWindow.connect(SIG_PLAYER_SETUP_DONE, lambda x: mainWindow.present())
 
+    print("""
+        Keys on main screen:
+            ESC: Close current question/"Oops" button
+            F8: Set current question to "nobody knew it"
+            F10: Undo last action
+            F11: Fullscreen (only on second monitor if available)
+            <Player key>: A player wants to answer
+    """)
+
     try:
         Gtk.main()
     except KeyboardInterrupt:
