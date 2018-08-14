@@ -22,9 +22,9 @@ class AnswerGrid(Gtk.Box):
         self.initComponents()
     
     def initComponents(self, rows = 5, cols = 5):
-        self.headline = tuple([Gtk.Label("Headline " + str(i), name="headline") for i in range(1, rows + 1)])
+        self.headline = tuple([Gtk.Label("Headline " + str(i), name="headline") for i in range(1, cols + 1)])
 
-        createRow = lambda row: tuple([Slot(col, row, None) for col in range(0, cols)]) #TODO: reihenfolge col row einheitlich
+        createRow = lambda row: tuple([Slot(row, col, None) for col in range(0, cols)])
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
         for child in self.headlineGrid.get_children():
@@ -44,22 +44,22 @@ class AnswerGrid(Gtk.Box):
             buttons = [slot._button for slot in filter(lambda x: x.hasButton(), row)]
             if len(buttons) == 0:
                 continue
-            print('grabbing')
-            print(buttons[0])
+
             buttons[0].set_can_focus(True)
             buttons[0].grab_focus()
             return
 
     @property
     def cols(self):
+        print('eval')
         return len(self.headline)
 
     @property
     def rows(self):
-        return len(self.slots[0]) if len(self.slots) > 0 else 0
+        return len(self.slots)
 
 class Slot(Gtk.Box):
-    def __init__(self, col, row, answer, doubleJeopardy=False): #TODO: double jeopardy aus nem model ziehen, nicht aus dem UI element
+    def __init__(self, row, col, answer):
         Gtk.Box.__init__(self)
         self.col = col
         self.row = row
