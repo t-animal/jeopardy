@@ -51,7 +51,6 @@ class AnswerGrid(Gtk.Box):
 
     @property
     def cols(self):
-        print('eval')
         return len(self.headline)
 
     @property

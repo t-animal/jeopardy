@@ -13,8 +13,8 @@ class HistoryRestorer(GObject.Object):
         GObject.Object.__init__(self)
         self.gameStateManager = gameStateManager
 
-        self.history = []
-        self.curSelected = -1
+        self.undoStack = []
+        self.redoStack = []
         self.pushNewState(self.gameStateManager.resultsByCategory)
         self.gameStateChangeHandlerId = None 
 
@@ -34,27 +34,32 @@ class HistoryRestorer(GObject.Object):
         self.pushNewState(self.gameStateManager.resultsByCategory)
     
     def pushNewState(self, curState):
-        self.history.append(copy.deepcopy(curState))
-        self.curSelected += 1
+        self.undoStack.append(copy.deepcopy(curState))
+        self.redoStack = []
 
     def undo(self):
-        if self.curSelected == 0:
+        if len(self.undoStack) <= 1:
             return
-        
-        self.curSelected  -= 1
 
-        self.gameStateManager.resultsByCategory = self.history[self.curSelected]
+        oldCurrentState = self.undoStack.pop()
+        self.redoStack.append(oldCurrentState)
+
+        newCurrentState = self.undoStack[-1]
+        self.gameStateManager.resultsByCategory = copy.deepcopy(newCurrentState)
+
         self._unregisterSignals()
         self.gameStateManager.emit(SIG_GAME_MODEL_CHANGED)
         self._registerSignals()
     
     def redo(self):
-        if self.curSelected == len(self.history) - 1:
+        if len(redoStack) == 0:
             return
-        
-        self.curSelected  += 1
-        
-        self.gameStateManager.resultsByCategory = self.history[self.curSelected]
+
+        newCurrentState = self.redoStack.pop()
+        self.undoStack.append(newCurrentState)
+
+        self.gameStateManager.resultsByCategory = copy.deepcopy(newCurrentState)
+
         self._unregisterSignals()
         self.gameStateManager.emit(SIG_GAME_MODEL_CHANGED)
         self._registerSignals()
