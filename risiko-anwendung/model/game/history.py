@@ -52,7 +52,7 @@ class HistoryRestorer(GObject.Object):
         self._registerSignals()
     
     def redo(self):
-        if len(redoStack) == 0:
+        if len(self.redoStack) == 0:
             return
 
         newCurrentState = self.redoStack.pop()

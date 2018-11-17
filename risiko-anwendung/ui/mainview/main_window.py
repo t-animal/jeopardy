@@ -111,8 +111,11 @@ class MainWindow(Gtk.Window):
             rng.present()
             rng.random(playerCount + 1)
 
-        if event.keyval == Gdk.KEY_F10:
+        if event.keyval == Gdk.KEY_F9:
             self.history.undo()
+
+        if event.keyval == Gdk.KEY_F10:
+            self.history.redo()
 
 class MainWindowInitializer():
 

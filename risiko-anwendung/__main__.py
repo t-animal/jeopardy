@@ -76,7 +76,8 @@ if __name__ == "__main__":
         Keys on main screen:
             ESC: Close current question/"Oops" button
             F8: Set current question to "nobody knew it"
-            F10: Undo last action
+            F9: Undo last action
+            F10: Redo last undone action
             F11: Fullscreen (only on second monitor if available)
             <Player key>: A player wants to answer
     """)
