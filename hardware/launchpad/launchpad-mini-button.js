@@ -1,10 +1,11 @@
 const lunchpad = require('lunchpad');
+var ks = require('node-key-sender');
+
 const Color = lunchpad.Color;
 
-const ff = require('../lib/floodfillImplementation');
-const generateBlankSquare = require('../lib/generateBlankSquare');
+const generateBlankSquare = require('lunchpad/src/lib/generateBlankSquare');
 
-var ks = require('node-key-sender');
+
 
 const keys = ['a', 'b', 'c', 'd']
 

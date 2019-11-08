@@ -1,0 +1,16 @@
+{
+  "name": "hardware",
+  "version": "1.0.0",
+  "description": "",
+  "main": "launchpad-mini-button.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lunchpad": "^2.4.0",
+    "node-key-sender": "^1.0.11"
+  }
+}
