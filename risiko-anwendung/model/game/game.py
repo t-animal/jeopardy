@@ -83,7 +83,7 @@ class GameStateModel(GObject.Object):
 
     def getPointsOfPlayer(self, player):
         runningSum = 0
-        isOfPlayer = lambda result: result.player.key == player.key
+        isOfPlayer = lambda result: result.player is not None and result.player.key == player.key
 
         for resultsByRow in self.resultsByCategory.values():
             for results in resultsByRow:
