@@ -45,7 +45,10 @@ class ImageAnswer(Answer):
     def __init__(self, playerManager, category, imageUrl):
         super().__init__(playerManager, category)
         self.imageUrl = imageUrl
-        self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.imageUrl)
+        if imageUrl.endswith('gif'):
+            self.pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(self.imageUrl)
+        else:
+            self.pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.imageUrl)
         self.image = None
 
     def packed(self):
@@ -61,8 +64,12 @@ class ImageAnswer(Answer):
             desiredWidth = desiredWidth * newDesiredHeight / desiredHeight
             desiredHeight = newDesiredHeight
 
-        pixbuf = self.pixbuf.scale_simple(desiredWidth, desiredHeight, GdkPixbuf.InterpType.BILINEAR)
-        newImage = Gtk.Image.new_from_pixbuf(pixbuf)
+        if self.imageUrl.endswith('gif'):
+            newImage = Gtk.Image.new_from_animation(self.pixbuf)
+        else:
+            pixbuf = self.pixbuf.scale_simple(desiredWidth, desiredHeight, GdkPixbuf.InterpType.BILINEAR)
+            newImage = Gtk.Image.new_from_pixbuf(pixbuf)
+
         if not self.image is None:
             self.remove(self.image)
         self.pack_start(newImage, True, True, 0)
