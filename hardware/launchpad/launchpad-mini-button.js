@@ -9,19 +9,12 @@ const generateBlankSquare = require('lunchpad/src/lib/generateBlankSquare')
 const keys = ['a', 'b', 'c', 'd']
 
 async function init() {
-  const launchpads = []
-
-  try {
-    await lunchpad.initialize(1).then(launchpad => launchpads.push(launchpad))
-    await lunchpad.initialize(2).then(launchpad => launchpads.push(launchpad))
-    await lunchpad.initialize(3).then(launchpad => launchpads.push(launchpad))
-    await lunchpad.initialize(4).then(launchpad => launchpads.push(launchpad))
-  } catch(e) {
-    console.log(e);
-    console.log(launchpads.length + ' Boards found') 
-  }
-
-  return launchpads 
+  return Promise.all([
+    lunchpad.initialize(1),
+    lunchpad.initialize(2),
+    lunchpad.initialize(3),
+    lunchpad.initialize(4)
+  ])
 }
 
 let isCleared = false
@@ -96,7 +89,7 @@ function buttons(boards) {
     const intervalHandle = setInterval(() => {
       boards.forEach(board => {
         buttons.forEach(({x, y}, index) => {
-          board.setSquare(x, y, index === i ? Color.AMBER : Color.BLACK);
+          board.setSquare(x, y, index === i ? Color.BLACK : Color.AMBER);
         })
       })
   
