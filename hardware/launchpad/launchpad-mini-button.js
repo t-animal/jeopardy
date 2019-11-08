@@ -1,11 +1,10 @@
-const lunchpad = require('lunchpad');
-var ks = require('node-key-sender');
+const lunchpad = require('lunchpad')
 
-const Color = lunchpad.Color;
+const sendKey = require('./sendKey');
 
-const generateBlankSquare = require('lunchpad/src/lib/generateBlankSquare');
+const Color = lunchpad.Color
 
-
+const generateBlankSquare = require('lunchpad/src/lib/generateBlankSquare')
 
 const keys = ['a', 'b', 'c', 'd']
 
@@ -13,63 +12,103 @@ async function init() {
   const launchpads = []
 
   try {
-    await lunchpad.initialize(1).then(launchpad => launchpads.push(launchpad));
-    await lunchpad.initialize(2).then(launchpad => launchpads.push(launchpad));
-    await lunchpad.initialize(3).then(launchpad => launchpads.push(launchpad));
-    await lunchpad.initialize(4).then(launchpad => launchpads.push(launchpad));
-  }catch(e) {
-    console.log(launchpads.length + ' Boards found'); 
+    await lunchpad.initialize(1).then(launchpad => launchpads.push(launchpad))
+    await lunchpad.initialize(2).then(launchpad => launchpads.push(launchpad))
+    await lunchpad.initialize(3).then(launchpad => launchpads.push(launchpad))
+    await lunchpad.initialize(4).then(launchpad => launchpads.push(launchpad))
+  } catch(e) {
+    console.log(e);
+    console.log(launchpads.length + ' Boards found') 
   }
 
-  return launchpads;
+  return launchpads 
 }
 
 let isCleared = false
-function clearAllBoards(launchpads) {
+function clearAllBoards(launchpads) { 
   launchpads.forEach(elem => {
-    elem.updateBoard(generateBlankSquare(Color.GREEN))
+    // elem.updateBoard(generateBlankSquare(Color.GREEN))
     elem.clearSquares()
   })
+
   isCleared = true
 }
 
 init().then((boards) => {
-  clearAllBoards(boards);
-  buttons(boards);
+  clearAllBoards(boards)
+  buttons(boards)
 })
 
-
-function buttons(launchpads) {
-
-  launchpads.forEach(elem => {
-    elem.on('input', () => {buttonPressed(elem)})
+function buttons(boards) {
+  boards.forEach(elem => {
+    elem.on('input', () => buttonPressed(elem))
   })
 
-  function buttonPressed(button) {
-    if(!isCleared){
-      return;
+  let resetWaiting = waiting(boards)
+  function buttonPressed(activeBoard) {
+    if (!isCleared){
+      return
     }
 
-    ks.sendKey(keys[launchpads.indexOf(button)]);
+    resetWaiting()
+    sendKey(keys[boards.indexOf(activeBoard)])
 
-    button.updateBoard(generateBlankSquare(Color.GREEN))
-    isCleared = false;
+    boards.forEach(board => {
+      board.updateBoard(generateBlankSquare(board === activeBoard ? Color.GREEN : Color.RED))
+    });
 
-    const nextRound = () => {
-      clearAllBoards(launchpads);
-      button.removeListener('functionX', nextRound)
-      button.removeListener('functionY', nextRound)
-    }
-    button.on('functionX', nextRound)
-    button.on('functionY', nextRound)
+    isCleared = false
 
-    launchpads.forEach(elem => {
-      if (elem === button) return;
-      elem.updateBoard(generateBlankSquare(Color.RED))
-    })
+    blinkingReset(boards, activeBoard)
   }
 
+  function blinkingReset(boards, activeBoard) {
+    activeBoard.setFunctionY(0, Color.AMBER);
+  
+    let on = false;
+    const intervalHandle = setInterval(() => {
+      activeBoard.setFunctionY(0, on ? Color.BLACK : Color.AMBER)
+  
+      on = !on
+    }, 200)
+  
+    const handleReset = () => {
+      clearAllBoards(boards)
+      clearInterval(intervalHandle)
+      activeBoard.setFunctionY(0, Color.BLACK)
+      activeBoard.removeListener('functionY', handleReset)
+
+      resetWaiting = waiting(boards)
+    }
+  
+    activeBoard.on('functionY', handleReset)
+  }
+
+  function waiting(boards) {
+    let i = 0;
+    const buttons = [
+      {x: 3, y: 3},
+      {x: 3, y: 4},
+      {x: 4, y: 4},
+      {x: 4, y: 3}
+    ];
+  
+    const intervalHandle = setInterval(() => {
+      boards.forEach(board => {
+        buttons.forEach(({x, y}, index) => {
+          board.setSquare(x, y, index === i ? Color.AMBER : Color.BLACK);
+        })
+      })
+  
+      i = (i + 1) % buttons.length;
+    }, 600);
+  
+    return () => {
+      clearInterval(intervalHandle);
+    }
+  }
 }
 
 
-module.exports = init;
+
+module.exports = init
