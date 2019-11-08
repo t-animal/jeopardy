@@ -1,3 +1,5 @@
+import itertools
+import os
 import yaml
 from collections import OrderedDict
 
@@ -11,6 +13,9 @@ class SpecialField():
 
     def __str__(self):
         return str(self.scalar)
+
+    def isImage(self):
+        return SpecialField.IMAGE_ANSWER in self.specialties
 
     @staticmethod
     def isSpecialField(field):
@@ -44,6 +49,11 @@ class GameStateLoader():
         with open(filename) as stream:
             data = yaml.safe_load(stream)
             self.checkData(data)
+
+            folder = os.path.dirname(filename)
+            for answer in itertools.chain(*data.values()):
+                if SpecialField.isSpecialField(answer) and answer.isImage():
+                    answer.scalar = os.path.join(folder, answer.scalar)
 
             for category in data:
                 self.gameStateModel.addCategory(category, data[category])
