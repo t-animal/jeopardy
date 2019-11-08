@@ -89,7 +89,7 @@ function buttons(boards) {
     const intervalHandle = setInterval(() => {
       boards.forEach(board => {
         buttons.forEach(({x, y}, index) => {
-          board.setSquare(x, y, index === i ? Color.BLACK : Color.AMBER);
+          board.setSquare(x, y, index === i ? Color.AMBER : Color.BLACK);
         })
       })
   
