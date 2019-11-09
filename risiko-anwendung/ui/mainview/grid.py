@@ -97,10 +97,10 @@ class Slot(Gtk.Box):
             if any(map(lambda r: type(r) == NobodyKnewResult, self.results)):
                 self._label.get_style_context().add_class("nobody-knew")
 
-            if len(self.results) < 5:
+            if len(self.results) < 4:
                 self._label.set_text("\n".join([result.getLabel() for result in self.results]))
             else:
-                text = "\n".join([result.getLabel() for result in self.results[:3]])
+                text = "\n".join([result.getLabel() for result in self.results[:2]])
                 text += "\n...\n"
                 text += self.results[-1].getLabel()
                 self._label.set_text(text)
