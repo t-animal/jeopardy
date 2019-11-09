@@ -79,6 +79,7 @@ if __name__ == "__main__":
             F9: Undo last action
             F10: Redo last undone action
             F11: Fullscreen (only on second monitor if available)
+            F12: Display the "RNG"
             <Player key>: A player wants to answer
     """)
 

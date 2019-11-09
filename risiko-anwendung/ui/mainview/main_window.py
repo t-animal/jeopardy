@@ -107,7 +107,7 @@ class MainWindow(Gtk.Window):
     def _keyReleaseEvent(self, widget, event):
         if event.keyval == Gdk.KEY_F12:
             playerCount = len(self.playerManager.getPlayers())
-            rng = RngWindow(upperLimit = playerCount + 1)
+            rng = RngWindow(upperLimit = playerCount + 1, duration=500)
             rng.present()
             rng.random(playerCount + 1)
 
