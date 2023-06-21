@@ -1,0 +1,3 @@
+pycairo==1.23.0
+PyGObject==3.44.1
+PyYAML==6.0
