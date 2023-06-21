@@ -34,25 +34,20 @@ void setup() {
     inputPins[i] = NOT_CONFIGURED;
   }
 
-  setupPair(0, 1);
-  setupPair(2, 3);
-  setupPair(4, 5);
-  setupPair(6, 7);
-  setupPair(8, 9);
-  setupPair(10, 11);
-  setupPair(12, 13);
+  assignNextCharTo(2); // a
+  assignNextCharTo(4); // b
+  assignNextCharTo(7); // c
+  assignNextCharTo(8); // d
 }
 
-void setupPair(const short pinA, const short pinB) {
+void assignNextCharToaabccd(const short pin) {
   if(initializedPins == MAX_PINS){
     return;
   }
   
-  pinMode(pinA, INPUT_PULLUP);
-  pinMode(pinB, OUTPUT);
-  digitalWrite(pinB, LOW);
+  pinMode(pin, INPUT_PULLUP);
   
-  inputPins[initializedPins++] = pinA;
+  inputPins[initializedPins++] = pin;
 }
 
 void loop() {
