@@ -6,6 +6,7 @@ from collections import OrderedDict
 class SpecialField():
     DOUBLE_JEOPARDY = 0
     IMAGE_ANSWER = 1
+    AUDIO_ANSWER = 2
 
     def __init__(self, scalar, specialty):
         self.scalar = scalar
@@ -16,6 +17,9 @@ class SpecialField():
 
     def isImage(self):
         return SpecialField.IMAGE_ANSWER in self.specialties
+
+    def isAudio(self):
+        return SpecialField.AUDIO_ANSWER in self.specialties
 
     @staticmethod
     def isSpecialField(field):
@@ -40,6 +44,11 @@ class SpecialField():
          value = loader.construct_scalar(node)
          return SpecialField(value, SpecialField.IMAGE_ANSWER)
 
+    @staticmethod
+    def audioAnswerConstructor(loader, node):
+        value = loader.construct_scalar(node)
+        return SpecialField(value, SpecialField.AUDIO_ANSWER)
+
 class GameStateLoader():
 
     def __init__(self, gameStateModel):
@@ -50,9 +59,9 @@ class GameStateLoader():
             data = yaml.safe_load(stream)
             self.checkData(data)
 
-            folder = os.path.dirname(filename)
+            folder = os.path.dirname(os.path.abspath(filename))
             for answer in itertools.chain(*data.values()):
-                if SpecialField.isSpecialField(answer) and answer.isImage():
+                if SpecialField.isSpecialField(answer) and (answer.isImage() or answer.isAudio()):
                     answer.scalar = os.path.join(folder, answer.scalar)
 
             for category in data:

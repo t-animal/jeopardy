@@ -40,8 +40,13 @@ class MainWindow(Gtk.Window):
 
     def showGrid(self):
         for child in self.mainContainer.get_children():
-            if not child == self.gridContainer:
-                self.mainContainer.remove(child)
+            if child == self.gridContainer:
+                continue
+
+            if hasattr(child, "stopMedia"):
+                child.stopMedia()
+
+            self.mainContainer.remove(child)
 
         if not self.buzzerSignalId is None:
             self.disconnect(self.buzzerSignalId)
