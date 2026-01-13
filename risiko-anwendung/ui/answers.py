@@ -4,18 +4,8 @@ from gi.repository import Gtk, Gdk, GdkPixbuf
 
 import os
 
+from .audio_player import GstPlaybinPlayer, PlayerState, is_gst_available
 from ..model.game import SpecialField
-
-_GST_AVAILABLE = False
-try:
-    gi.require_version('Gst', '1.0')
-    from gi.repository import Gst, GLib
-
-    Gst.init(None)
-    _GST_AVAILABLE = True
-except (ImportError, ValueError):
-    Gst = None
-    GLib = None
 
 class AnswerFactory:
 
@@ -46,6 +36,9 @@ class Answer(Gtk.Box):
         pass
 
     def stopMedia(self):
+        pass
+
+    def toggleMedia(self):
         pass
 
 class TextAnswer(Answer):
@@ -96,78 +89,73 @@ class ImageAnswer(Answer):
 
         self.show_all()
 
-
-class _GstPlaybinPlayer:
-    def __init__(self):
-        if not _GST_AVAILABLE:
-            raise RuntimeError("GStreamer (Gst) is not available")
-
-        self._playbin = Gst.ElementFactory.make("playbin", None)
-        if self._playbin is None:
-            raise RuntimeError("Failed to create GStreamer 'playbin' element")
-
-        self._bus = self._playbin.get_bus()
-        self._bus_watch_installed = False
-        self._bus_handler_id = None
-
-    def play_file(self, path):
-        uri = GLib.filename_to_uri(os.path.abspath(path), None)
-        self._playbin.set_property("uri", uri)
-
-        if not self._bus_watch_installed:
-            self._bus.add_signal_watch()
-            self._bus_handler_id = self._bus.connect("message", self._on_message)
-            self._bus_watch_installed = True
-
-        self._playbin.set_state(Gst.State.PLAYING)
-
-    def stopMedia(self):
-        self._playbin.set_state(Gst.State.NULL)
-
-    def _on_message(self, bus, message):
-        message_type = message.type
-        if message_type == Gst.MessageType.EOS:
-            self.stopMedia()
-        elif message_type == Gst.MessageType.ERROR:
-            self.stopMedia()
-
-
 class AudioAnswer(Answer):
     def __init__(self, playerManager, category, audioPath):
         super().__init__(playerManager, category)
 
         self.audioPath = audioPath
-        self._player = None
         self._started = False
 
         title = Gtk.Label("Audio clue")
         self.pack_start(title, False, True, 0)
 
-        filename = os.path.basename(audioPath)
-        label = Gtk.Label(filename)
-        label.set_line_wrap(True)
-        label.set_line_wrap_mode(2)
-        label.set_max_width_chars(30)
-        self.pack_start(label, True, True, 0)
+        self._statusLabel = Gtk.Label()
+        self._statusLabel.set_halign(Gtk.Align.CENTER)
+        self._statusLabel.set_justify(Gtk.Justification.CENTER)
+        self._set_status("⏹")
+        self.pack_start(self._statusLabel, False, True, 0)
 
-        if not _GST_AVAILABLE:
+        if not is_gst_available():
             warning = Gtk.Label("GStreamer not available: cannot play audio")
             warning.set_line_wrap(True)
             warning.set_line_wrap_mode(2)
             warning.set_max_width_chars(40)
             self.pack_start(warning, False, True, 0)
 
+            self._player = None
+        else:
+            self._player = GstPlaybinPlayer()
+            self._player.set_on_state_changed(self._on_player_state_changed)
+
         self.show_all()
 
-    def packed(self):
-        if self._started or not _GST_AVAILABLE:
-            return
+    def _set_status(self, symbol):
+        # Use markup to make the label large.
+        self._statusLabel.set_markup(f'<span size="xx-large">{symbol}</span>')
 
-        if self._player is None:
-            self._player = _GstPlaybinPlayer()
+    def _on_player_state_changed(self, state):
+        if state == PlayerState.PLAYING:
+            self._set_status("▶")
+        elif state == PlayerState.PAUSED:
+            self._set_status("⏸")
+        elif state == PlayerState.STOPPED:
+            self._set_status("⏹")
+            # Treat STOPPED as "not started" for F7 restart semantics.
+            self._started = False
+
+    def packed(self):
+        if self._started or self._player is None:
+            return
 
         self._player.play_file(self.audioPath)
         self._started = True
+
+    def toggleMedia(self):
+        if self._player is None:
+            return
+
+        if (not self._started) or self._player.is_stopped():
+            self._player.play_file(self.audioPath)
+            self._started = True
+            return
+
+        if self._player.is_playing():
+            self._player.pause()
+        elif self._player.is_paused():
+            self._player.resume()
+        else:
+            self._player.play_file(self.audioPath)
+            self._started = True
 
     def stopMedia(self):
         if self._player is None:

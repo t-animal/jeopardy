@@ -19,6 +19,7 @@ class MainWindow(Gtk.Window):
         Gtk.Window.__init__(self, title="Jeopardy")
         self.buzzIndicator = None
         self.buzzerSignalId = None
+        self._activeAnswer = None
 
         self.playerManager = playerManager
         self.gameStateModel = gameStateModel
@@ -48,6 +49,8 @@ class MainWindow(Gtk.Window):
 
             self.mainContainer.remove(child)
 
+        self._activeAnswer = None
+
         if not self.buzzerSignalId is None:
             self.disconnect(self.buzzerSignalId)
             self.buzzerSignalId = None
@@ -69,11 +72,17 @@ class MainWindow(Gtk.Window):
         self.gridContainer.hide()
 
         self.mainContainer.pack_start(answer, True, True, 0)
+        self._activeAnswer = answer
         self.buzzerSignalId = self.connect("key-release-event", self.buzzered, row, col, wager)
         answer.show()
         answer.packed()
 
     def buzzered(self, widget, event, row, col, wager = 0):
+        if event.keyval == Gdk.KEY_F7:
+            if self._activeAnswer is not None:
+                self._activeAnswer.toggleMedia()
+            return
+
         if event.keyval == Gdk.KEY_Escape:
             if not self.buzzIndicator is None:
                 self.buzzIndicator.destroy()

@@ -1,3 +1,22 @@
+"""Entry point for the Jeopardy GTK application.
+
+Python 3.14 removed `pkgutil.get_loader`, but some PyGObject versions still
+import it. Provide a small compatibility shim so the app can start.
+"""
+
+import importlib.util
+import pkgutil
+
+if not hasattr(pkgutil, "get_loader"):
+    def get_loader(fullname):
+        try:
+            spec = importlib.util.find_spec(fullname)
+        except (ImportError, ValueError):
+            return None
+        return spec.loader if spec else None
+
+    pkgutil.get_loader = get_loader
+
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
@@ -75,6 +94,7 @@ if __name__ == "__main__":
     print("""
         Keys on main screen:
             ESC: Close current question/"Oops" button
+            F7: Toggle audio playback for current question
             F8: Set current question to "nobody knew it"
             F9: Undo last action
             F10: Redo last undone action
