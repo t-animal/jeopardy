@@ -1,5 +1,5 @@
 Cat1:
-  - A1-1
+  - !double A1-1
   - A1-2
   - A1-3
   - A1-4
@@ -7,7 +7,7 @@ Cat1:
 
 Cat2:
   - A2-1
-  - A2-2
+  - !double*image sample-assets/duckroll.jpg
   - A2-3
   - A2-4
   - A2-5
@@ -15,7 +15,7 @@ Cat2:
 Cat3:
   - A3-1
   - A3-2
-  - A3-3
+  - !image sample-assets/duckroll.jpg
   - A3-4
   - A3-5
 
@@ -23,7 +23,7 @@ Cat4:
   - A4-1
   - A4-2
   - A4-3
-  - A4-4
+  - !audio sample-assets/rickroll.mp3
   - A4-5
 
 Cat5:
