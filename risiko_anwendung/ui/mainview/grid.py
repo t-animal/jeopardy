@@ -69,7 +69,7 @@ class AnswerGrid(Gtk.Box):
 AnswerSelectedCallback = Callable[[], None]
 
 class Slot(Gtk.Box):
-    def __init__(self, row: int, onAnswerSelected: AnswerSelectedCallback | None = None):
+    def __init__(self, row: int, onAnswerSelected: AnswerSelectedCallback):
         Gtk.Box.__init__(self)
         self._onAnswerSelected = onAnswerSelected
         self._row = row
@@ -123,8 +123,7 @@ class Slot(Gtk.Box):
         self.queue_draw()
 
     def _handleButtonClicked(self, _target: Gtk.Button) -> None:
-        if self._onAnswerSelected is not None:
-            self._onAnswerSelected()
+        self._onAnswerSelected()
 
     def _createButton(self) -> Gtk.Button:
         self._button = Gtk.Button(label=str((self._row + 1) * 100))
