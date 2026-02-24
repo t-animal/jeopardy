@@ -1,0 +1,8 @@
+
+from risiko_anwendung.model.persistor.helpers import addOrderedDictToYamlInterpreter, addNobodyKnewResultToYamlInterpreter
+addOrderedDictToYamlInterpreter()
+addNobodyKnewResultToYamlInterpreter()
+del addOrderedDictToYamlInterpreter
+del addNobodyKnewResultToYamlInterpreter
+
+from risiko_anwendung.model.persistor.persistor import ModelPersistor, ModelLoader

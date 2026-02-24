@@ -5,13 +5,13 @@ Dependencies: pyyaml, pygobject
 # Running
 
 ```
-python -m risiko-anwendung --logFile log.yml --config config.yml
+python -m risiko_anwendung --logFile log.yml --config config.yml
 ```
 
 If you get loads of GTK Warnings it helps using a standard-conforming default template:
 
 ```
-GTK_THEME=Adwaita:light python -m risiko-anwendung --logFile log.yml --config config.yml
+GTK_THEME=Adwaita:light python -m risiko_anwendung --logFile log.yml --config config.yml
 ```
 
 If you prefer a light theme for the application append `--theme light`
