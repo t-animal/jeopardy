@@ -27,7 +27,7 @@ from gi.repository import Gtk, Gdk
 import sys, os
 
 from risiko_anwendung.ui.fullscreeen_manager import FullscreenManager
-from risiko_anwendung.ui.mainview import MainWindow, MainWindowInitializer
+from risiko_anwendung.ui.mainview import MainWindow
 from risiko_anwendung.ui.answers import AnswerFactory
 from risiko_anwendung.ui.player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
 from risiko_anwendung.model import GameStateModel, GameStateLoader, PlayerManager, SIG_PLAYER_MODEL_CHANGED
@@ -59,9 +59,6 @@ if __name__ == "__main__":
 
     mainWindow = MainWindow(playerManager, gameStateModel, history, answerFactory)
     playerWindow = PlayerOverviewWindow(playerManager)
-
-    initer = MainWindowInitializer(playerManager, gameStateModel, mainWindow)
-    initer.initMainWindow()
 
     fullscreenManager.handleWindow(mainWindow)
     fullscreenManager.handleWindow(playerWindow)

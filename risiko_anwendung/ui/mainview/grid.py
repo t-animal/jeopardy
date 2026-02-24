@@ -2,17 +2,21 @@ import gi
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango
-from typing import Callable
+from typing import Callable, Sequence
 
+from risiko_anwendung.model import SIG_GAME_MODEL_CHANGED, GameStateModel
 from risiko_anwendung.model.game import NobodyKnewResult
 from risiko_anwendung.model.types import ResultByAnswer, ResultLike
 from risiko_anwendung.util import createSignal
 
+
 SIG_ANSWER_SELECTED = "answerSelected"
 
 class AnswerGrid(Gtk.Box):
-    def __init__(self) -> None:
+    def __init__(self, gameStateModel: GameStateModel) -> None:
         Gtk.Box.__init__(self)
+        self.gameStateModel = gameStateModel
+
         self.headlineGrid = Gtk.Grid(name="headlineGrid")
         self.answerGrid = Gtk.Grid(name="answerGrid")
 
@@ -24,22 +28,52 @@ class AnswerGrid(Gtk.Box):
         self.pack_start(self.headlineGrid, False, False, 0)
         self.pack_start(self.answerGrid, True, True, 0)
 
-        self.initComponents()
-    
-    def initComponents(self, rows: int = 5, cols: int = 5) -> None:
-        self.headline = tuple([Gtk.Label(label="Headline " + str(i), name="headline") for i in range(1, cols + 1)])
+        self._initComponents()
 
-        createSlot = lambda row, col: Slot(row, lambda: self._onSlotSelected(row, col))
+        gameStateModel.connect(SIG_GAME_MODEL_CHANGED, lambda *event_args: self._initComponents())
+
+
+    def _initComponents(self) -> None:
+        categories, slotResults = self._collectCategoriesAndResults()
+        self._initHeadlines(categories)
+        self._initSlots(categories, slotResults)
+
+    def _collectCategoriesAndResults(self) -> tuple[tuple[str, ...], tuple[tuple[ResultByAnswer, ...], ...]]:
+        categories = tuple(self.gameStateModel.getCategoryNames())
+        rows = len(self.gameStateModel.getAnswers(categories[0])) if categories else 0
+        slotResults = tuple(
+            tuple(self.gameStateModel.getResults(category, row) for category in categories)
+            for row in range(rows)
+        )
+        return categories, slotResults
+
+    def _initHeadlines(self, categoryNames: Sequence[str]) -> None:
+        for child in self.headlineGrid.get_children():
+            self.headlineGrid.remove(child)
+
+        self.headline = tuple([Gtk.Label(label=category, name="headline") for category in categoryNames])
+
+        for col in range(0, len(categoryNames)):
+            self.headlineGrid.attach(self.headline[col], col, 0, 1, 1)
+
+        self.show_all()
+
+    def _initSlots(self, categoryNames: Sequence[str], slotResults: Sequence[Sequence[ResultByAnswer]]) -> None:
+        cols=len(categoryNames)
+        rows=len(slotResults[0]) if cols > 0 else 0
+
+        createSlot = lambda row, col: Slot(
+            row,
+            lambda: self._onSlotSelected(row, col),
+            slotResults[row][col] if slotResults is not None else None
+        )
         createRow = lambda row: tuple([createSlot(row, col) for col in range(0, cols)])
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
-        for child in self.headlineGrid.get_children():
-            self.headlineGrid.remove(child)
         for child in self.answerGrid.get_children():
             self.answerGrid.remove(child)
 
         for col in range(0, cols):
-            self.headlineGrid.attach(self.headline[col], col, 0, 1, 1)
             for row in range(0, rows):
                 self.answerGrid.attach(self.slots[row][col], col, row + 1, 1, 1)
 
@@ -47,7 +81,7 @@ class AnswerGrid(Gtk.Box):
 
     def _onSlotSelected(self, row: int, col: int) -> None:
         self.emit(SIG_ANSWER_SELECTED, row, col)
-    
+
     def focus(self) -> None:
         for row in self.slots:
             buttons = [slot._button for slot in filter(lambda x: x.hasButton(), row)]
@@ -69,21 +103,17 @@ class AnswerGrid(Gtk.Box):
 AnswerSelectedCallback = Callable[[], None]
 
 class Slot(Gtk.Box):
-    def __init__(self, row: int, onAnswerSelected: AnswerSelectedCallback):
+    def __init__(self, row: int, onAnswerSelected: AnswerSelectedCallback, results: ResultByAnswer | None = None):
         Gtk.Box.__init__(self)
         self._onAnswerSelected = onAnswerSelected
         self._row = row
 
-        self.results: ResultByAnswer = []
+        self.results: ResultByAnswer = list(results) if results is not None else []
         self._button = self._createButton()
         self._label = Gtk.Label(label="", name="results-label")
 
         self.repack()
 
-    def addResult(self, result: ResultLike) -> None:
-        self.results.append(result)
-        self.repack()
-    
     def hasButton(self) -> bool:
         return bool(self._button.get_ancestor(Gtk.Box) == self)
 
