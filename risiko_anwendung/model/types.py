@@ -19,8 +19,11 @@ ColumnIndex: TypeAlias = int
 GridIndex: TypeAlias = tuple[RowIndex, ColumnIndex]
 
 AnswerValue: TypeAlias = str | SpecialField
+QuestionText: TypeAlias = str | None
 CategoryAnswers: TypeAlias = list[AnswerValue]
 GameTable: TypeAlias = OrderedDict[CategoryName, CategoryAnswers]
+CategoryQuestions: TypeAlias = list[QuestionText]
+QuestionsByCategory: TypeAlias = dict[CategoryName, CategoryQuestions]
 
 ResultLike: TypeAlias = Result | NobodyKnewResult
 ResultByAnswer: TypeAlias = list[ResultLike]

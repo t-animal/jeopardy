@@ -1,34 +1,59 @@
 Cat1:
-  - !double A1-1
-  - A1-2
-  - A1-3
-  - A1-4
-  - A1-5
+  - answer: !double A1-1
+    question: "Dummy question for Cat1-100"
+  - answer: A1-2
+    question: "Dummy question for Cat1-200"
+  - answer: A1-3
+    question: "Dummy question for Cat1-300"
+  - answer: A1-4
+    question: "Dummy question for Cat1-400"
+  - answer: A1-5
+    question: "Dummy question for Cat1-500"
 
 Cat2:
-  - A2-1
-  - !double*image sample-assets/duckroll.jpg
-  - A2-3
-  - A2-4
-  - A2-5
+  - answer: A2-1
+    question: "Dummy question for Cat2-100"
+  - answer: !double*image sample-assets/duckroll.jpg
+    question: "What is a duckroll?"
+  - answer: A2-3
+    question: "Dummy question for Cat2-300"
+  - answer: A2-4
+    question: "Dummy question for Cat2-400"
+  - answer: A2-5
+    question: "Dummy question for Cat2-500"
 
 Cat3:
-  - A3-1
-  - A3-2
-  - !image sample-assets/duckroll.jpg
-  - A3-4
-  - A3-5
+  - answer: A3-1
+    question: "Dummy question for Cat3-100"
+  - answer: A3-2
+    question: "Dummy question for Cat3-200"
+  - answer: !image sample-assets/duckroll.jpg
+    question: "What is a duckroll?"
+  - answer: A3-4
+    question: "Dummy question for Cat3-400"
+  - answer: A3-5
+    question: "Dummy question for Cat3-500"
 
 Cat4:
-  - A4-1
-  - A4-2
-  - A4-3
-  - !audio sample-assets/rickroll.mp3
-  - A4-5
+  - answer: A4-1
+    question: "Dummy question for Cat4-100"
+  - answer: A4-2
+    question: "Dummy question for Cat4-200"
+  - answer: A4-3
+    question: "Dummy question for Cat4-300"
+  - answer: !audio sample-assets/rickroll.mp3
+    question: "What is a rickroll?"
+  - answer: A4-5
+    question: "Dummy question for Cat4-500"
 
 Cat5:
-  - A5-1
-  - A5-2
-  - A5-3
-  - A5-4
-  - Lorem ipsuum1 Lorem ipsuum2 Lorem ipsuum3 Lorem ipsuum4 Lorem ipsuum5 Lorem ipsuum6 Lorem ipsuum7 Lorem ipsuum8 Lorem ipsuum9 Lorem ipsuum10 Lorem ipsuum11 Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum 
+  - answer: A5-1
+    question: "Dummy question for Cat5-100"
+  - answer: A5-2
+    question: "Dummy question for Cat5-200"
+  - answer: A5-3
+    question: "Dummy question for Cat5-300"
+  - answer: A5-4
+    question: "Dummy question for Cat5-400"
+  - answer: Lorem ipsuum1 Lorem ipsuum2 Lorem ipsuum3 Lorem ipsuum4 Lorem ipsuum5 Lorem ipsuum6 Lorem ipsuum7 Lorem ipsuum8 Lorem ipsuum9 Lorem ipsuum10 Lorem ipsuum11 Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum
+    question: "What is lorem ipsum but spelled incorrectly?"

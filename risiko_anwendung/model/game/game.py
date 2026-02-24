@@ -8,7 +8,7 @@ from collections.abc import KeysView
 from risiko_anwendung.model.game.loader import SpecialField
 from risiko_anwendung.model import SIG_GAME_MODEL_CHANGED
 from risiko_anwendung.model.player import Player
-from risiko_anwendung.model.types import AnswerValue, CategoryAnswers, CategoryName, ResultsByCategory, ResultLike
+from risiko_anwendung.model.types import AnswerValue, CategoryAnswers, CategoryName, QuestionText, QuestionsByCategory, ResultsByCategory, ResultLike
 
 class Result():
 
@@ -36,22 +36,27 @@ class GameStateModel(GObject.Object):
         GObject.Object.__init__(self)
 
         self.answersByCategory: OrderedDict[CategoryName, CategoryAnswers] = OrderedDict()
+        self.questionsByCategory: QuestionsByCategory = {}
         self.resultsByCategory: ResultsByCategory = {}
 
-    def addCategory(self, categoryName: CategoryName, answers: CategoryAnswers) -> None:
+    def addCategory(self, categoryName: CategoryName, answers: CategoryAnswers, questions: list[QuestionText]) -> None:
         if len(self.answersByCategory) > 0:
             expectedAnswerCount = len(next(iter(self.answersByCategory.values())))
 
             if not len(answers) == expectedAnswerCount:
                 raise ValueError("Answer count does not match existing answers!")
 
+        if len(questions) != len(answers):
+            raise ValueError("Question count does not match answer count!")
+
         self.answersByCategory[categoryName] = answers
+        self.questionsByCategory[categoryName] = questions
         self.resultsByCategory[categoryName] = [[] for _ in range(len(answers))]
-        
+
         self.emit(SIG_GAME_MODEL_CHANGED)
 
     def getGridSize(self) -> tuple[int, int]:
-        categoryCount = len(self.answersByCategory) 
+        categoryCount = len(self.answersByCategory)
 
         if categoryCount == 0:
             return (0,0)
@@ -65,6 +70,9 @@ class GameStateModel(GObject.Object):
     def getAnswers(self, category: CategoryName) -> CategoryAnswers:
         return self.answersByCategory[category]
 
+    def getQuestion(self, category: CategoryName, rowIndex: int) -> QuestionText:
+        return self.questionsByCategory[category][rowIndex]
+
     def hasResults(self, category: CategoryName, rowIndex: int) -> bool:
         return len(self.resultsByCategory[category][rowIndex]) > 0
 
@@ -74,7 +82,7 @@ class GameStateModel(GObject.Object):
     def addResult(self, category: CategoryName, rowIndex: int, player: Player, correct: bool, points: int) -> None:
         self.resultsByCategory[category][rowIndex].append(Result(player, correct, points))
         self.emit(SIG_GAME_MODEL_CHANGED)
-    
+
     def setNobodyKnew(self, category: CategoryName, rowIndex: int) -> None:
         self.resultsByCategory[category][rowIndex].append(NobodyKnewResult())
         self.emit(SIG_GAME_MODEL_CHANGED)

@@ -53,7 +53,7 @@ Main screen keys:
 
 ## Config file
 
-The config should be a YAML file with a dictionary. The keys are category names, the entries are lists of answers. All categories must have an equal number of answers.
+The config should be a YAML file with a dictionary. The keys are category names, the entries are lists of clues. All categories must have an equal number of entries.
 
 Supported answer forms:
 
@@ -62,6 +62,21 @@ Supported answer forms:
 - `!image path/to/image.jpg`
 - `!audio path/to/audio.mp3`
 - combined tags: `!double*image`, `!double*audio`
+- optional mapping form: `answer: ...` plus optional `question: ...`
+
+Each list item can either be a legacy scalar/tagged value (backward compatible), or a mapping:
+
+```yaml
+- answer: !double "Some answer text"
+  question: "What is the expected Jeopardy-style question?"
+```
+
+When a clue is opened, the optional `question` text is printed to the console (if present).
+
+Sample files:
+
+- `sample_config.yml`: new format using `answer` + optional `question`
+- `sample_config_legacy.yml`: legacy scalar/tag format (still supported)
 
 Example:
 
@@ -78,6 +93,12 @@ Category B:
 Category C:
   - !double double jeopardy
   - another question
+
+Category D:
+  - answer: "This is the shown answer"
+    question: "What is the hidden question?"
+  - answer: !double*image path/to/image.jpg
+    question: "What is shown in this image?"
 ```
 
 ## Repository overview

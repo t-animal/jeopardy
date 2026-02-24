@@ -60,6 +60,10 @@ class MainWindow(Gtk.Window):
     def _onAnswerSelected(self, _grid: AnswerGrid, row: int, col: int) -> None:
         category = list(self.gameStateModel.getCategoryNames())[col]
         answerValue = self.gameStateModel.getAnswers(category)[row]
+        question = self.gameStateModel.getQuestion(category, row)
+        if question is not None and question.strip() != "":
+            print("Question for {} ({}): {}".format(category, (row + 1) * 100, question))
+
         answer = self.answerFactory.createAnswer(category, answerValue)
 
         self.showAnswer(answer, row, col)

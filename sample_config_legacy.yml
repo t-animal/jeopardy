@@ -1,0 +1,34 @@
+Cat1:
+  - !double A1-1
+  - A1-2
+  - A1-3
+  - A1-4
+  - A1-5
+
+Cat2:
+  - A2-1
+  - !double*image sample-assets/duckroll.jpg
+  - A2-3
+  - A2-4
+  - A2-5
+
+Cat3:
+  - A3-1
+  - A3-2
+  - !image sample-assets/duckroll.jpg
+  - A3-4
+  - A3-5
+
+Cat4:
+  - A4-1
+  - A4-2
+  - A4-3
+  - !audio sample-assets/rickroll.mp3
+  - A4-5
+
+Cat5:
+  - A5-1
+  - A5-2
+  - A5-3
+  - A5-4
+  - Lorem ipsuum1 Lorem ipsuum2 Lorem ipsuum3 Lorem ipsuum4 Lorem ipsuum5 Lorem ipsuum6 Lorem ipsuum7 Lorem ipsuum8 Lorem ipsuum9 Lorem ipsuum10 Lorem ipsuum11 Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum 
