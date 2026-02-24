@@ -19,6 +19,7 @@ class RngWindow(Gtk.Window):
         self._closed = False
         self.connect("delete-event", self._on_close)
         self.connect("destroy", self._on_destroy)
+        self.connect("key-release-event", self._on_key_release)
 
         self.totalNumbers = totalNumbers
         self.upperLimit = upperLimit
@@ -43,6 +44,12 @@ class RngWindow(Gtk.Window):
 
     def _on_destroy(self, *args):
         self._mark_closed()
+
+    def _on_key_release(self, _widget: Gtk.Widget, event: Gdk.EventKey) -> bool:
+        if event.keyval == Gdk.KEY_Escape:
+            self.close()
+            return True
+        return False
 
     def random(self) -> None:
         self._randomAnimation(random.choice(self.choices))
