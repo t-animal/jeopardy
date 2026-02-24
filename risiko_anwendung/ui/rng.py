@@ -58,7 +58,7 @@ class RngWindow(Gtk.Window):
                 self.revealer.remove(oldLabel)
             
             if randomsLeft == 0:
-                label = Gtk.Label(str(number))
+                label = Gtk.Label(label=str(number))
                 self.revealer.add(label)
                 self.revealer.set_reveal_child(True)
                 self.revealer.show_all()
@@ -66,7 +66,7 @@ class RngWindow(Gtk.Window):
                     executeUnlessClosed(lambda: GLib.idle_add(getFinalizationClosure(label)))).start()
                 return
             
-            label = Gtk.Label(str(random.choices(range(1, self.upperLimit))[0]))
+            label = Gtk.Label(label=str(random.choices(range(1, self.upperLimit))[0]))
             self.revealer.add(label)
 
             self.revealer.set_transition_duration(self.duration/(randomsLeft**1.2)+1)

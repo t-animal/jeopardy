@@ -2,10 +2,14 @@ import gi
 
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango
+from typing import Callable
 
 from risiko_anwendung.model.game import NobodyKnewResult
 from risiko_anwendung.model.types import AnswerValue, ResultByAnswer, ResultLike
 from risiko_anwendung.ui.answers import AnswerBox
+from risiko_anwendung.util import createSignal
+
+SIG_ANSWER_SELECTED = "answerSelected"
 
 class AnswerGrid(Gtk.Box):
     def __init__(self) -> None:
@@ -26,7 +30,8 @@ class AnswerGrid(Gtk.Box):
     def initComponents(self, rows: int = 5, cols: int = 5) -> None:
         self.headline = tuple([Gtk.Label(label="Headline " + str(i), name="headline") for i in range(1, cols + 1)])
 
-        createRow = lambda row: tuple([Slot(row, col, None) for col in range(0, cols)])
+        createSlot = lambda row, col: Slot(row, lambda: self._onSlotSelected(row, col))
+        createRow = lambda row: tuple([createSlot(row, col) for col in range(0, cols)])
         self.slots = tuple([createRow(row) for row in range(0, rows)])
 
         for child in self.headlineGrid.get_children():
@@ -40,6 +45,9 @@ class AnswerGrid(Gtk.Box):
                 self.answerGrid.attach(self.slots[row][col], col, row + 1, 1, 1)
 
         self.show_all()
+
+    def _onSlotSelected(self, row: int, col: int) -> None:
+        self.emit(SIG_ANSWER_SELECTED, row, col)
     
     def focus(self) -> None:
         for row in self.slots:
@@ -59,12 +67,14 @@ class AnswerGrid(Gtk.Box):
     def rows(self):
         return len(self.slots)
 
+AnswerSelectedCallback = Callable[[], None]
+
 class Slot(Gtk.Box):
-    def __init__(self, row: int, col: int, answer: AnswerBox | None):
+    def __init__(self, row: int, onAnswerSelected: AnswerSelectedCallback | None = None):
         Gtk.Box.__init__(self)
-        self.col = col
-        self.row = row
-        self.answer = answer
+        self._onAnswerSelected = onAnswerSelected
+        self._row = row
+        self.answer: AnswerBox | None = None # Is initialized by MainWindowInitializer
 
         self.results: ResultByAnswer = []
         self._button = self._createButton()
@@ -114,10 +124,13 @@ class Slot(Gtk.Box):
         self.show_all()
         self.queue_draw()
 
-    def showAnswer(self, _target: Gtk.Button) -> None:
-        self.get_toplevel().showAnswer(self.answer, self.row, self.col)
+    def _handleButtonClicked(self, _target: Gtk.Button) -> None:
+        if self._onAnswerSelected is not None:
+            self._onAnswerSelected()
 
     def _createButton(self) -> Gtk.Button:
-        self._button = Gtk.Button(label=str((self.row + 1) * 100))
-        self._button.connect("clicked", self.showAnswer)
+        self._button = Gtk.Button(label=str((self._row + 1) * 100))
+        self._button.connect("clicked", self._handleButtonClicked)
         return self._button
+
+createSignal(SIG_ANSWER_SELECTED, AnswerGrid, [int, int])

@@ -3,7 +3,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 from typing import Any
 
-from risiko_anwendung.ui.mainview.grid import AnswerGrid
+from risiko_anwendung.ui.mainview.grid import AnswerGrid, SIG_ANSWER_SELECTED
 from risiko_anwendung.ui.mainview.buzz_indicator import BuzzIndicator
 from risiko_anwendung.ui.mainview.wager_prompt import WagerPrompt
 
@@ -34,6 +34,7 @@ class MainWindow(Gtk.Window):
 
         self.gridContainer = Gtk.Box(orientation = Gtk.Orientation.VERTICAL)
         self.grid = AnswerGrid()
+        self.grid.connect(SIG_ANSWER_SELECTED, self._onAnswerSelected)
         self.playerNamesBox = Gtk.Box(name="playerNamesBox")
 
         self.gridContainer.pack_start(self.grid, True, True, 0)
@@ -43,6 +44,13 @@ class MainWindow(Gtk.Window):
         self.add(self.mainContainer)
 
         self.connect("key-release-event", self._keyReleaseEvent)
+
+    def _onAnswerSelected(self, _grid: AnswerGrid, row: int, col: int) -> None:
+        answer = self.grid.slots[row][col].answer
+        if answer is None:
+            return
+
+        self.showAnswer(answer, row, col)
 
     def showGrid(self) -> None:
         for child in self.mainContainer.get_children():
