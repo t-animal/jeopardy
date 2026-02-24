@@ -1,30 +1,71 @@
-# Installation
+# Jeopardy (GTK)
 
-Dependencies: pyyaml, pygobject
+A local Jeopardy-style quiz application built with Python + GTK. The app loads questions from YAML, manages players and scores, supports image/audio clues, and persists game progress to a YAML log.
 
-# Running
+## Installation
 
+Dependencies: pyyaml, pygobject.
+
+Install runtime dependencies:
+
+```bash
+pip install -r requirements.txt
 ```
+
+Optional development dependencies (typing):
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+## Running
+
+```bash
 python -m risiko_anwendung --logFile log.yml --config config.yml
 ```
 
-If you get loads of GTK Warnings it helps using a standard-conforming default template:
+If you get loads of GTK warnings it helps using a standard-conforming default template:
 
-```
+```bash
 GTK_THEME=Adwaita:light python -m risiko_anwendung --logFile log.yml --config config.yml
 ```
 
-If you prefer a light theme for the application append `--theme light`
+If you prefer a light theme for the application, append `--theme light`.
 
-# Config file
+Example with the included sample config:
 
-The config should be a yaml file with a dictionary. The keys are the category names, the
-entries should be lists of strings representing the answers. All categories must have an
-equal number of answers.
+```bash
+python -m risiko_anwendung --logFile test.yml --config sample_config.yml
+```
+
+## Controls
+
+Main screen keys:
+
+- `Esc`: close current question / "Oops" action
+- `F7`: toggle audio playback for current question
+- `F8`: mark current question as "nobody knew it"
+- `F9`: undo last action
+- `F10`: redo last undone action
+- `F11`: fullscreen (second monitor if available)
+- `F12`: open RNG window
+- `<Player key>`: player buzzes in
+
+## Config file
+
+The config should be a YAML file with a dictionary. The keys are category names, the entries are lists of answers. All categories must have an equal number of answers.
+
+Supported answer forms:
+
+- plain text
+- `!double` (double jeopardy)
+- `!image path/to/image.jpg`
+- `!audio path/to/audio.mp3`
+- combined tags: `!double*image`, `!double*audio`
 
 Example:
 
-```
+```yaml
 Category A:
   - Some question.
   - |
@@ -37,4 +78,28 @@ Category B:
 Category C:
   - !double double jeopardy
   - another question
+```
+
+## Repository overview
+
+- `risiko_anwendung/`: main Python GTK app package
+  - `model/`: player management, game table/results state, YAML config loading, and undo/redo history
+  - `ui/`: game board window, player setup window, buzz handling, answer rendering (text/image/audio), and RNG window
+  - `model/persistor/`: YAML snapshot persistence and restore logic for players/results
+  - `__main__.py` + `custom*.css`: startup wiring, command-line options, and dark/light theme styling
+- `hardware/`: optional buzzer integrations (Arduino and Launchpad scripts)
+- `sample-assets/`: example media used by `sample_config.yml`
+
+## Persistence and data
+
+- The app appends snapshots to the log file passed via `--logFile`.
+- Players and results are stored as YAML documents and restored on next start.
+- `test.yml` is an example of persisted game history.
+
+## Development
+
+Type-checking is configured in `mypy.ini` (Python 3.11 target):
+
+```bash
+mypy
 ```
