@@ -8,6 +8,7 @@ from risiko_anwendung.ui.mainview.wager_prompt import WagerPrompt
 
 from risiko_anwendung.ui.player import PlayerWidget
 from risiko_anwendung.ui.answers import AnswerBox, AnswerFactory
+from risiko_anwendung.ui.console_output import clear_current_question_box, print_current_question
 from risiko_anwendung.ui.rng import RngWindow
 
 from risiko_anwendung.model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHANGED
@@ -62,13 +63,15 @@ class MainWindow(Gtk.Window):
         answerValue = self.gameStateModel.getAnswers(category)[row]
         question = self.gameStateModel.getQuestion(category, row)
         if question is not None and question.strip() != "":
-            print("Question for {} ({}): {}".format(category, (row + 1) * 100, question))
+            print_current_question(category, row, question)
 
         answer = self.answerFactory.createAnswer(category, answerValue)
 
         self.showAnswer(answer, row, col)
 
     def showGrid(self) -> None:
+        clear_current_question_box()
+
         for child in self.mainContainer.get_children():
             if child == self.gridContainer:
                 continue
@@ -117,10 +120,10 @@ class MainWindow(Gtk.Window):
                 self.buzzIndicator.destroy()
                 self.buzzIndicator = None
                 return
-            
+
             self.showGrid()
             return
-        
+
         if event.keyval == Gdk.KEY_F8:
             category = list(self.gameStateModel.getCategoryNames())[col]
             self.gameStateModel.setNobodyKnew(category, row)
@@ -145,7 +148,7 @@ class MainWindow(Gtk.Window):
                 category = list(self.gameStateModel.getCategoryNames())[col]
                 self.gameStateModel.addResult(category, row, activePlayer, True, wager)
                 self.showGrid()
-    
+
 
     def _keyReleaseEvent(self, widget: Gtk.Widget, event: Gdk.EventKey) -> None:
         if event.keyval == Gdk.KEY_F12:

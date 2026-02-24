@@ -27,6 +27,7 @@ from gi.repository import Gtk, Gdk
 import sys, os
 
 from risiko_anwendung.ui.fullscreeen_manager import FullscreenManager
+from risiko_anwendung.ui.console_output import print_controls
 from risiko_anwendung.ui.mainview import MainWindow
 from risiko_anwendung.ui.answers import AnswerFactory
 from risiko_anwendung.ui.player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
@@ -94,17 +95,7 @@ if __name__ == "__main__":
 
     playerWindow.connect(SIG_PLAYER_SETUP_DONE, beginGame)
 
-    print("""
-        Keys on main screen:
-            ESC: Close current question/"Oops" button
-            F7: Toggle audio playback for current question
-            F8: Set current question to "nobody knew it"
-            F9: Undo last action
-            F10: Redo last undone action
-            F11: Fullscreen (only on second monitor if available)
-            F12: Display the "RNG"
-            <Player key>: A player wants to answer
-    """)
+    print_controls()
 
     try:
         Gtk.main()
