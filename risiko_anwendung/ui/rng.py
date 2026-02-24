@@ -11,7 +11,7 @@ def clearChildren(widget):
 
 class RngWindow(Gtk.Window):
 
-    def __init__(self, totalNumbers = 40, upperLimit = 100, duration = 800):
+    def __init__(self, totalNumbers = 60, upperLimit = 100, duration = 800, playerCount = None):
         Gtk.Window.__init__(self, title="RNG")
         self.revealer = Gtk.Revealer(expand=True)
         self.add(self.revealer)
@@ -20,9 +20,17 @@ class RngWindow(Gtk.Window):
         self.connect("delete-event", self._on_close)
         self.connect("destroy", self._on_destroy)
 
-        self.totalNumbers = 60
+        self.totalNumbers = totalNumbers
         self.upperLimit = upperLimit
         self.duration = duration
+
+        self.choices = [
+            "NaN",
+            "-1",
+            "2147483647",
+        ]
+        if playerCount is not None:
+            self.choices.insert(0, str(playerCount + 1))
 
         self.revealer.set_transition_type(Gtk.RevealerTransitionType.CROSSFADE)
 
@@ -35,8 +43,11 @@ class RngWindow(Gtk.Window):
 
     def _on_destroy(self, *args):
         self._mark_closed()
+
+    def random(self) -> None:
+        self._randomAnimation(random.choice(self.choices))
     
-    def random(self, number = 42):
+    def _randomAnimation(self, finalResult: str):
         
         def executeUnlessClosed(func):
             def wrapped():
@@ -58,7 +69,7 @@ class RngWindow(Gtk.Window):
                 self.revealer.remove(oldLabel)
             
             if randomsLeft == 0:
-                label = Gtk.Label(label=str(number))
+                label = Gtk.Label(label=str(finalResult))
                 self.revealer.add(label)
                 self.revealer.set_reveal_child(True)
                 self.revealer.show_all()
