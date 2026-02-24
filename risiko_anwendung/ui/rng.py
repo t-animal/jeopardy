@@ -11,8 +11,11 @@ def clearChildren(widget):
 
 class RngWindow(Gtk.Window):
 
-    def __init__(self, totalNumbers = 60, upperLimit = 100, duration = 800, playerCount = None):
+    def __init__(self, totalNumbers = 60, upperLimit = 100, duration = 800, playerCount = None, parent: Gtk.Window | None = None):
         Gtk.Window.__init__(self, title="RNG")
+        if parent is not None:
+            self.set_transient_for(parent)
+            self.set_position(Gtk.WindowPosition.CENTER_ON_PARENT)
         self.revealer = Gtk.Revealer(expand=True)
         self.add(self.revealer)
 
@@ -53,9 +56,9 @@ class RngWindow(Gtk.Window):
 
     def random(self) -> None:
         self._randomAnimation(random.choice(self.choices))
-    
+
     def _randomAnimation(self, finalResult: str):
-        
+
         def executeUnlessClosed(func):
             def wrapped():
                 if self._closed:
@@ -65,7 +68,7 @@ class RngWindow(Gtk.Window):
 
         def hideNumber():
             self.revealer.set_reveal_child(False)
-        
+
         def getFinalizationClosure(existingLabel):
             def finalizeLastNumber():
                 existingLabel.get_style_context().add_class("final-random-number")
@@ -74,7 +77,7 @@ class RngWindow(Gtk.Window):
         def nextRandom(randomsLeft, oldLabel=None):
             if not oldLabel is None:
                 self.revealer.remove(oldLabel)
-            
+
             if randomsLeft == 0:
                 label = Gtk.Label(label=str(finalResult))
                 self.revealer.add(label)
@@ -83,7 +86,7 @@ class RngWindow(Gtk.Window):
                 threading.Timer(self.revealer.get_transition_duration()*2/1000,
                     executeUnlessClosed(lambda: GLib.idle_add(getFinalizationClosure(label)))).start()
                 return
-            
+
             label = Gtk.Label(label=str(random.choices(range(1, self.upperLimit))[0]))
             self.revealer.add(label)
 
@@ -93,8 +96,8 @@ class RngWindow(Gtk.Window):
 
             def queue_next():
                 nextRandom(randomsLeft - 1, label)
-            
+
             threading.Timer(self.revealer.get_transition_duration()/1000, executeUnlessClosed(lambda: GLib.idle_add(hideNumber))).start()
             threading.Timer(self.revealer.get_transition_duration()*2/1000, executeUnlessClosed(lambda: GLib.idle_add(queue_next))).start()
-        
+
         nextRandom(self.totalNumbers)
