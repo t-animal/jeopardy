@@ -1,7 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
-from typing import Any
 
 from risiko_anwendung.ui.mainview.grid import AnswerGrid, SIG_ANSWER_SELECTED
 from risiko_anwendung.ui.mainview.buzz_indicator import BuzzIndicator
@@ -15,12 +14,11 @@ from risiko_anwendung.model import SIG_PLAYER_MODEL_CHANGED, SIG_GAME_MODEL_CHAN
 from risiko_anwendung.model.game import GameStateModel
 from risiko_anwendung.model.game.history import HistoryRestorer
 from risiko_anwendung.model.player import PlayerManager
-from risiko_anwendung.model.types import AnswerValue, CategoryName
 from risiko_anwendung.util import clearChildren
 
 class MainWindow(Gtk.Window):
 
-    def __init__(self, playerManager: PlayerManager, gameStateModel: GameStateModel, history: HistoryRestorer):
+    def __init__(self, playerManager: PlayerManager, gameStateModel: GameStateModel, history: HistoryRestorer, answerFactory: AnswerFactory):
         Gtk.Window.__init__(self, title="Jeopardy")
         self.buzzIndicator: BuzzIndicator | None = None
         self.buzzerSignalId: int | None = None
@@ -29,6 +27,7 @@ class MainWindow(Gtk.Window):
         self.playerManager = playerManager
         self.gameStateModel = gameStateModel
         self.history = history
+        self.answerFactory = answerFactory
 
         self.mainContainer = Gtk.Box()
 
@@ -46,9 +45,9 @@ class MainWindow(Gtk.Window):
         self.connect("key-release-event", self._keyReleaseEvent)
 
     def _onAnswerSelected(self, _grid: AnswerGrid, row: int, col: int) -> None:
-        answer = self.grid.slots[row][col].answer
-        if answer is None:
-            return
+        category = list(self.gameStateModel.getCategoryNames())[col]
+        answerValue = self.gameStateModel.getAnswers(category)[row]
+        answer = self.answerFactory.createAnswer(category, answerValue)
 
         self.showAnswer(answer, row, col)
 
@@ -147,7 +146,6 @@ class MainWindow(Gtk.Window):
 class MainWindowInitializer():
 
     def __init__(self, playerManager: PlayerManager, gameStateModel: GameStateModel, mainWindow: MainWindow):
-        self.answerFactory = AnswerFactory(playerManager)
         self.playerManager = playerManager
         self.gameStateModel = gameStateModel
         self._mainWindow = mainWindow
@@ -180,9 +178,8 @@ class MainWindowInitializer():
                 self._grid.initComponents(len(answers), cols)
 
             self._grid.headline[col].set_text(category)
-            for row, answer in enumerate(self.gameStateModel.getAnswers(category)):
+            for row in range(len(self.gameStateModel.getAnswers(category))):
                 slot = self._grid.slots[row][col]
-                slot.answer = self.answerFactory.createAnswer(category, answer)
                 slot.results = self.gameStateModel.getResults(category, row)
                 slot.repack()
 

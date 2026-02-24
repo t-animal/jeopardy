@@ -28,6 +28,7 @@ import sys, os
 
 from risiko_anwendung.ui.fullscreeen_manager import FullscreenManager
 from risiko_anwendung.ui.mainview import MainWindow, MainWindowInitializer
+from risiko_anwendung.ui.answers import AnswerFactory
 from risiko_anwendung.ui.player import PlayerOverviewWindow, SIG_PLAYER_SETUP_DONE
 from risiko_anwendung.model import GameStateModel, GameStateLoader, PlayerManager, SIG_PLAYER_MODEL_CHANGED
 from risiko_anwendung.model.persistor import ModelPersistor, ModelLoader
@@ -54,8 +55,9 @@ if __name__ == "__main__":
     ModelPersistor(playerManager, gameStateModel, args.logFile)
 
     history = HistoryRestorer(gameStateModel)
+    answerFactory = AnswerFactory(playerManager)
 
-    mainWindow = MainWindow(playerManager, gameStateModel, history)
+    mainWindow = MainWindow(playerManager, gameStateModel, history, answerFactory)
     playerWindow = PlayerOverviewWindow(playerManager)
 
     initer = MainWindowInitializer(playerManager, gameStateModel, mainWindow)

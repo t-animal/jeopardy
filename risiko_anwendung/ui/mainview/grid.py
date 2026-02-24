@@ -5,8 +5,7 @@ from gi.repository import Gtk, Pango
 from typing import Callable
 
 from risiko_anwendung.model.game import NobodyKnewResult
-from risiko_anwendung.model.types import AnswerValue, ResultByAnswer, ResultLike
-from risiko_anwendung.ui.answers import AnswerBox
+from risiko_anwendung.model.types import ResultByAnswer, ResultLike
 from risiko_anwendung.util import createSignal
 
 SIG_ANSWER_SELECTED = "answerSelected"
@@ -74,7 +73,6 @@ class Slot(Gtk.Box):
         Gtk.Box.__init__(self)
         self._onAnswerSelected = onAnswerSelected
         self._row = row
-        self.answer: AnswerBox | None = None # Is initialized by MainWindowInitializer
 
         self.results: ResultByAnswer = []
         self._button = self._createButton()
