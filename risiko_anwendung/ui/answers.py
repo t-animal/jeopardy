@@ -15,15 +15,15 @@ class AnswerFactory:
     def createAnswer(self, category: CategoryName, answer: AnswerValue) -> "AnswerBox":
         if SpecialField.isSpecialField(answer):
             if SpecialField.IMAGE_ANSWER in answer.specialties:
-                return ImageAnswerBox(self.playerManager, category, answer.scalar)
+                return ImageAnswer(self.playerManager, category, answer.scalar)
 
             if SpecialField.AUDIO_ANSWER in answer.specialties:
-                return AudioAnswerBox(self.playerManager, category, answer.scalar)
+                return AudioAnswer(self.playerManager, category, answer.scalar)
 
-            return TextAnswerBox(self.playerManager, category, str(answer))
+            return TextAnswer(self.playerManager, category, str(answer))
 
         assert isinstance(answer, str)
-        return TextAnswerBox(self.playerManager, category, answer)
+        return TextAnswer(self.playerManager, category, answer)
 
 class AnswerBox(Gtk.Box):
 
@@ -32,10 +32,10 @@ class AnswerBox(Gtk.Box):
         self.playerManager = playerManager
 
         self.set_orientation(Gtk.Orientation.VERTICAL)
-        
-        label = Gtk.Label(label=category, name="headline") 
+
+        label = Gtk.Label(label=category, name="headline")
         self.pack_start(label, False, True, 0)
-    
+
     def packed(self) -> None:
         pass
 
@@ -45,29 +45,34 @@ class AnswerBox(Gtk.Box):
     def toggleMedia(self) -> None:
         pass
 
-class TextAnswerBox(AnswerBox):
+class TextAnswer(AnswerBox):
     def __init__(self, playerManager: PlayerManager, category: CategoryName, text: str):
         super().__init__(playerManager, category)
 
         label = Gtk.Label(label=text)
         label.set_line_wrap(True)
         label.set_line_wrap_mode(wrap_mode=Pango.WrapMode.WORD_CHAR)
-        label.set_max_width_chars(20)
+
+        # setting lines to 1 and ellipsize prevents a bug where alt-tabbing would cause inexplicable vertical growth of the window
+        # the text will still wrap, but it won't cause the window to grow indefinitely when alt-tabbing
+        label.set_lines(1)
+        label.set_ellipsize(Pango.EllipsizeMode.END)
+
         self.pack_start(label, True, True, 0)
 
         self.show_all()
 
-class ImageAnswerBox(AnswerBox):
+class ImageAnswer(AnswerBox):
     def __init__(self, playerManager: PlayerManager, category: CategoryName, imageUrl: str):
         super().__init__(playerManager, category)
         self.imageUrl = imageUrl
-        
+
         pixbuf: GdkPixbuf.Pixbuf | GdkPixbuf.PixbufAnimation | None = None
         if imageUrl.endswith('gif'):
             pixbuf = GdkPixbuf.PixbufAnimation.new_from_file(self.imageUrl)
         else:
             pixbuf = GdkPixbuf.Pixbuf.new_from_file(self.imageUrl)
-        
+
         if pixbuf is None:
             raise RuntimeError("Failed to load image from " + self.imageUrl)
 
@@ -100,7 +105,7 @@ class ImageAnswerBox(AnswerBox):
 
         self.show_all()
 
-class AudioAnswerBox(AnswerBox):
+class AudioAnswer(AnswerBox):
     def __init__(self, playerManager: PlayerManager, category: CategoryName, audioPath: str):
         super().__init__(playerManager, category)
 

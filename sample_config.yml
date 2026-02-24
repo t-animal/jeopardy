@@ -55,5 +55,5 @@ Cat5:
     question: "Dummy question for Cat5-300"
   - answer: A5-4
     question: "Dummy question for Cat5-400"
-  - answer: Lorem ipsuum1 Lorem ipsuum2 Lorem ipsuum3 Lorem ipsuum4 Lorem ipsuum5 Lorem ipsuum6 Lorem ipsuum7 Lorem ipsuum8 Lorem ipsuum9 Lorem ipsuum10 Lorem ipsuum11 Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum
+  - answer: "Lorem ipsuum1 Lorem ipsuum2 Lorem ipsuum3 Lorem ipsuum4\n Lorem ipsuum5 Lorem ipsuum6 Lorem ipsuum7 Lorem ipsuum8\n  Lorem ipsuum9 Lorem ipsuum10 Lorem ipsuum11 \nLorem ipsuum Lorem ipsuum Lorem ipsuum Lorem ipsuum Lorem\n  ipsuum Lorem ipsuum Lorem ipsuum Lorem \nipsuum Lorem ipsuum Lorem ipsuum lastline: \n Lorem ipsuum"
     question: "What is lorem ipsum but spelled incorrectly?"
