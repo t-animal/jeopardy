@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jeopardy-gtk"
+version = "0.1.0"
+description = "Local GTK Jeopardy quiz application"
+requires-python = ">=3.14"
+dependencies = [
+    "pycairo==1.23.0",
+    "PyGObject==3.44.1",
+    "PyYAML==6.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "mypy==1.10.1",
+    "types-PyYAML==6.0.12.20241230",
+]
+
+[project.scripts]
+jeopardy = "risiko_anwendung.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["risiko_anwendung*"]
+
+[tool.setuptools.package-data]
+risiko_anwendung = ["custom.css", "custom-light.css"]
+
+[tool.mypy]
+python_version = "3.14"
+pretty = true
+show_error_codes = true
+files = ["risiko_anwendung/**/*.py"]
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_return_any = true
+no_implicit_optional = true
+
+[[tool.mypy.overrides]]
+module = ["gi", "gi.*", "cairo", "cairo.*"]
+ignore_missing_imports = true

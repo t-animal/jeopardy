@@ -4,30 +4,44 @@ A local Jeopardy-style quiz application built with Python + GTK. The app loads q
 
 ## Installation
 
-Dependencies: pyyaml, pygobject.
+The project uses [uv](https://docs.astral.sh/uv/) for dependency and environment management.
 
-Install runtime dependencies:
+Linux system prerequisites (required by `PyGObject`/`pycairo`) must be installed via your distro package manager before syncing Python dependencies.
+
+Debian/Ubuntu example:
 
 ```bash
-pip install -r requirements.txt
+sudo apt install python3-dev libcairo2-dev libgirepository1.0-dev gir1.2-gtk-3.0
 ```
 
-Optional development dependencies (typing):
+Create/sync the virtual environment with runtime + development dependencies:
 
 ```bash
-pip install -r requirements-dev.txt
+uv sync --extra dev
+```
+
+If you only want runtime dependencies:
+
+```bash
+uv sync
 ```
 
 ## Running
 
 ```bash
-python -m risiko_anwendung --logFile log.yml --config config.yml
+uv run jeopardy --logFile log.yml --config config.yml
+```
+
+Equivalent module form:
+
+```bash
+uv run -m risiko_anwendung --logFile log.yml --config config.yml
 ```
 
 If you get loads of GTK warnings it helps using a standard-conforming default template:
 
 ```bash
-GTK_THEME=Adwaita:light python -m risiko_anwendung --logFile log.yml --config config.yml
+GTK_THEME=Adwaita:light uv run jeopardy --logFile log.yml --config config.yml
 ```
 
 If you prefer a light theme for the application, append `--theme light`.
@@ -35,7 +49,7 @@ If you prefer a light theme for the application, append `--theme light`.
 Example with the included sample config:
 
 ```bash
-python -m risiko_anwendung --logFile test.yml --config sample_config.yml
+uv run jeopardy --logFile test.yml --config sample_config.yml
 ```
 
 ## Controls
@@ -119,8 +133,8 @@ Category D:
 
 ## Development
 
-Type-checking is configured in `mypy.ini` (Python 3.11 target):
+Type-checking is configured in `pyproject.toml` (Python 3.14 target):
 
 ```bash
-mypy
+uv run mypy
 ```

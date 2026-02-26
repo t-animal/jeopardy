@@ -43,8 +43,8 @@ def getArguments(argv: Sequence[str]) -> Namespace:
     parser.add_argument("--theme", choices=["light", "dark"], required = False, default="dark")
     return parser.parse_args(argv)
 
-if __name__ == "__main__":
-    args = getArguments(sys.argv[1:])
+def main(argv: Sequence[str] | None = None) -> int:
+    args = getArguments(list(argv) if argv is not None else sys.argv[1:])
 
     fullscreenManager =  FullscreenManager()
     playerManager = PlayerManager()
@@ -88,7 +88,7 @@ if __name__ == "__main__":
     playerWindow.present()
 
     mainWindow.connect("destroy", Gtk.main_quit)
-    
+
     def beginGame(*args: object) -> None:
         mainWindow.present()
         playerWindow.iconify()
@@ -101,4 +101,9 @@ if __name__ == "__main__":
         Gtk.main()
     except KeyboardInterrupt:
         pass
-    
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
