@@ -36,15 +36,20 @@ from risiko_anwendung.model.persistor import ModelPersistor, ModelLoader
 
 from risiko_anwendung.model.game.history import HistoryRestorer
 
-def getArguments(argv: Sequence[str]) -> Namespace:
+def createArgumentParser() -> ArgumentParser:
     parser = ArgumentParser(description = "Jeopardy")
-    parser.add_argument("--logFile")
-    parser.add_argument("--config")
+    parser.add_argument("--logFile", required = True, help="Path to the log file to use for saving game state. If you really want to disable logging, you can set this to /dev/null.")
+    parser.add_argument("--config", required = True)
     parser.add_argument("--theme", choices=["light", "dark"], required = False, default="dark")
+    return parser
+
+def getArguments(argv: Sequence[str]) -> Namespace:
+    parser = createArgumentParser()
     return parser.parse_args(argv)
 
 def main(argv: Sequence[str] | None = None) -> int:
-    args = getArguments(list(argv) if argv is not None else sys.argv[1:])
+    argsList = list(argv) if argv is not None else sys.argv[1:]
+    args = getArguments(argsList)
 
     fullscreenManager =  FullscreenManager()
     playerManager = PlayerManager()

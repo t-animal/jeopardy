@@ -16,6 +16,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "mypy==1.10.1",
+    "PyGObject-stubs==2.16.0",
     "types-PyYAML==6.0.12.20241230",
 ]
 
@@ -41,3 +42,6 @@ no_implicit_optional = true
 [[tool.mypy.overrides]]
 module = ["gi", "gi.*", "cairo", "cairo.*"]
 ignore_missing_imports = true
+
+[tool.uv]
+config-settings-package = { pygobject-stubs = { config = "Gtk3,Gdk3" } }
