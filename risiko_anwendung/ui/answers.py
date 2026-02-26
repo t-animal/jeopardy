@@ -57,6 +57,7 @@ class TextAnswer(AnswerBox):
         # the text will still wrap, but it won't cause the window to grow indefinitely when alt-tabbing
         label.set_lines(1)
         label.set_ellipsize(Pango.EllipsizeMode.END)
+        label.set_justify(Gtk.Justification.CENTER)
 
         self.pack_start(label, True, True, 0)
 
